@@ -4,9 +4,9 @@
 # Input specification for runtest.sh
 # (Modifies input parameters.)
 
-INPUT_CASE=18            # Input case
+INPUT_CASE=19            # Input case
 
-NFILESMAX=1             # Maximum number of processed input files. (Set to -0 to process all; to -N to process all but the last N files.)
+NFILESMAX=-0             # Maximum number of processed input files. (Set to -0 to process all; to -N to process all but the last N files.)
 
 # Number of input files per job (Automatic optimisation on if < 1.)
 NFILESPERJOB_CONVERT=0  # Conversion
@@ -16,6 +16,7 @@ NFILESPERJOB_O2=1       # O2
 # Maximum number of simultaneously running O2 jobs
 NJOBSPARALLEL_O2=$(python3 -c "print(min(10, round($(nproc) / 2)))")
 
+JSONRUN2="dpl-config_run2.json"  # Run 2 tasks parameters
 JSONRUN3="dpl-config_run3.json"  # Run 3 tasks parameters
 # Run 5 tasks parameters for open HF study
 JSONRUN5_HF="dpl-config_run5_hf.json"
