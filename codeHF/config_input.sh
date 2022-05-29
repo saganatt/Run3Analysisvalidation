@@ -14,7 +14,7 @@ NFILESPERJOB_ALI=0      # AliPhysics
 NFILESPERJOB_O2=1       # O2
 
 # Maximum number of simultaneously running O2 jobs
-NJOBSPARALLEL_O2=$(python3 -c "print(min(50, round($(nproc) / 2)))")
+NJOBSPARALLEL_O2=$(python3 -c "print(min(10, round($(nproc) / 2)))")
 
 JSONRUN2="dpl-config_run2.json"  # Run 2 tasks parameters
 JSONRUN3="dpl-config_run3.json"  # Run 3 tasks parameters
