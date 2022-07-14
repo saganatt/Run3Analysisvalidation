@@ -1134,6 +1134,7 @@
         "processSameTPCTPChh": "true",
         "processSameTPCMFThh": "false",
         "processSameHFHadrons": "true",
+        "debugMode": "true",
         "cfgNoMixedEvents": 5,
         "processMixedTPCTPChh": "true",
         "processMixedHFHadrons": "true",
