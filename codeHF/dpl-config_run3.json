@@ -62,7 +62,7 @@
         "bz": "5",
         "doPvRefit": "false",
         "doCutQuality": "true",
-        "useIsGlobalTrack": "false",
+        "useIsGlobalTrack": "true",
         "tpcNClsFound": "71",
         "pTBinsTrack": {
             "values": [
@@ -759,7 +759,7 @@
     "hf-task-d0": {
         "d_selectionFlagD0": "0",
         "d_selectionFlagD0bar": "0",
-        "cutYCandMax": "1.0",
+        "cutYCandMax": "0.8",
         "d_selectionHFFlag": "1",
         "d_selectionTopol": "1",
         "d_selectionCand": "1",
@@ -1132,7 +1132,7 @@
                 "8"
             ]
         },
-        "processSameTPCTPChh": "true",
+        "processSameTPCTPChh": "false",
         "processSameTPCMFThh": "false",
         "processSameHFHadrons": "true",
         "debugMode": "true",
