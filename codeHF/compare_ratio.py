@@ -43,6 +43,13 @@ def main(file):
         ratios.append(ratio)
         drawn[hn] = [c, ratio]
 
+        for i in range(ratio.GetNbinsX()):
+            binc = ratio.GetBinContent(i)
+            binhd0 = hd0.GetBinContent(i)
+            binhcorr = hcorr.GetBinContent(i)
+            if binc != 1.0 and binc != 0.0:
+                print(f"Bin: {i} contains: {binc}, d0: {binhd0}, hcorr: {binhcorr}")
+
     save_ratios(ratios)
 
 
