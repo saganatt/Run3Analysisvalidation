@@ -84,14 +84,14 @@ DOO2_D0D0BAR_MCGEN=0     # hf-correlator-d0d0bar-mc-gen
 DOO2_DPLUSDMINUS_DATA=0  # hf-correlator-dplusdminus
 DOO2_DPLUSDMINUS_MCREC=0 # hf-correlator-dplusdminus-mc-rec
 DOO2_DPLUSDMINUS_MCGEN=0 # hf-correlator-dplusdminus-mc-gen
-DOO2_TASK_CORRD0=0  # hf-task-correlation-d0
+DOO2_TASK_CORRD0=1  # hf-task-correlation-d0
 # Other
 DOO2_MCCONV=0       # mc-converter
 DOO2_FDDCONV=0      # fdd-converter
 DOO2_TRKPROP=0      # track-propagation
 
 # Selection cuts
-APPLYCUTS_D0=0      # Apply D0 selection cuts.
+APPLYCUTS_D0=1      # Apply D0 selection cuts.
 APPLYCUTS_DPLUS=0   # Apply D+ selection cuts.
 APPLYCUTS_LC=0      # Apply Λc selection cuts.
 APPLYCUTS_XIC=0     # Apply Ξc selection cuts.

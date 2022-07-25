@@ -72,9 +72,8 @@
         "bz": "5",
         "doPvRefit": "false",
         "doCutQuality": "true",
-        "useIsGlobalTrack": "false",
-        "tpcNClsFound": "71",
         "useIsGlobalTrack": "true",
+        "tpcNClsFound": "71",
         "pTBinsTrack": {
             "values": [
                 "0.",
