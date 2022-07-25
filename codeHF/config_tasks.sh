@@ -14,9 +14,9 @@
 ####################################################################################################
 
 # Steps
-DOCLEAN=1           # Delete created files (before and after running tasks).
-DOCONVERT=0         # Convert AliESDs.root to AO2D.root.
-DOALI=0             # Run AliPhysics tasks.
+DOCLEAN=0           # Delete created files (before and after running tasks).
+DOCONVERT=1         # Convert AliESDs.root to AO2D.root.
+DOALI=1             # Run AliPhysics tasks.
 DOO2=1              # Run O2 tasks.
 DOPOSTPROCESS=0     # Run output postprocessing. (Compare AliPhysics and O2 output.)
 
@@ -28,9 +28,6 @@ DATABASE_O2="workflows.yml"
 MAKE_GRAPH=0        # Make topology graph.
 
 # Activation of O2 workflows
-# MC conversion
-DOO2_MCCONV=0       # mc-converter
-DOO2_FDDCONV=0      # fdd-converter
 # Trigger selection
 DOO2_TRIGSEL=0      # event-selection
 # QA
@@ -74,7 +71,6 @@ DOO2_TASK_CHIC=0    # hf-task-chic
 DOO2_TASK_LCK0SP=0  # hf-task-lc-tok0sp
 DOO2_TASK_XICC=0    # hf-task-xicc
 DOO2_TASK_BPLUS=0   # hf-task-bplus
-DOO2_TASK_HFCORR=1  # hf-task-hfcorrelations
 # Tree creators
 DOO2_TREE_D0=0      # hf-tree-creator-d0-tokpi
 DOO2_TREE_LC=0      # hf-tree-creator-lc-topkpi
@@ -88,6 +84,7 @@ DOO2_D0D0BAR_MCGEN=0     # hf-correlator-d0d0bar-mc-gen
 DOO2_DPLUSDMINUS_DATA=0  # hf-correlator-dplusdminus
 DOO2_DPLUSDMINUS_MCREC=0 # hf-correlator-dplusdminus-mc-rec
 DOO2_DPLUSDMINUS_MCGEN=0 # hf-correlator-dplusdminus-mc-gen
+DOO2_TASK_CORRD0=0  # hf-task-correlation-d0
 # Other
 DOO2_MCCONV=0       # mc-converter
 DOO2_FDDCONV=0      # fdd-converter
@@ -143,6 +140,7 @@ function AdjustJson {
   elif [ "$INPUT_RUN" -eq 3 ]; then
     ReplaceString "\"processRun2\": \"true\"" "\"processRun2\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
     ReplaceString "\"processRun3\": \"false\"" "\"processRun3\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
+    DOO2_TRKPROP=1
   fi
 
   # MC
@@ -191,11 +189,27 @@ function AdjustJson {
     ReplaceString "\"isRun3\": \"true\"" "\"isRun3\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
   fi
 
+  # lambdakzero-builder
+  if [ "$INPUT_RUN" -eq 2 ]; then
+    ReplaceString "\"isRun2\": \"0\"" "\"isRun2\": \"1\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  else
+    ReplaceString "\"isRun2\": \"1\"" "\"isRun2\": \"0\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  fi
+
   # tof-event-time
   if [ "$INPUT_RUN" -eq 3 ]; then
     ReplaceString "\"processNoFT0\": \"false\"" "\"processNoFT0\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
   else
     ReplaceString "\"processNoFT0\": \"true\"" "\"processNoFT0\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  fi
+
+  # hf-task-correlation-d0
+  if [ "$INPUT_RUN" -eq 3 ]; then
+    ReplaceString "\"processSameRun3\": \"false\"" "\"processSameRun3\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
+    ReplaceString "\"processSameRun2\": \"true\"" "\"processSameRun2\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  else
+    ReplaceString "\"processSameRun3\": \"true\"" "\"processSameRun3\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
+    ReplaceString "\"processSameRun2\": \"false\"" "\"processSameRun2\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
   fi
 
   # Enable D0 selection.
@@ -264,9 +278,6 @@ function MakeScriptO2 {
   [ "$ISALICE3" -eq 1 ] && SUFFIX_ALICE3="-alice3" || SUFFIX_ALICE3=""
 
   WORKFLOWS=""
-  # MC converter to version 001 of mcparticles
-  [ $DOO2_MCCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-mc-converter"
-  [ $DOO2_FDDCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-fdd-converter"
   # Trigger selection
   [ $DOO2_TRIGSEL -eq 1 ] && WORKFLOWS+=" o2-analysis-event-selection"
   # QA
@@ -314,7 +325,6 @@ function MakeScriptO2 {
   [ $DOO2_TASK_XICC -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-task-xicc"
   [ $DOO2_TASK_BPLUS -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-task-bplus"
   # Correlations
-  [ $DOO2_TASK_HFCORR -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-task-hfcorrelations"
   WF_CORR=""
   [ $DOO2_D0D0BAR_DATA -eq 1 ] && WF_CORR="o2-analysis-hf-correlator-d0d0bar o2-analysis-hf-task-correlation-ddbar"
   [ $DOO2_D0D0BAR_MCREC -eq 1 ] && WF_CORR="o2-analysis-hf-correlator-d0d0bar-mc-rec o2-analysis-hf-task-correlation-ddbar-mc-rec"
@@ -322,6 +332,7 @@ function MakeScriptO2 {
   [ $DOO2_DPLUSDMINUS_DATA -eq 1 ] && WF_CORR="o2-analysis-hf-correlator-dplusdminus o2-analysis-hf-task-correlation-ddbar"
   [ $DOO2_DPLUSDMINUS_MCREC -eq 1 ] && WF_CORR="o2-analysis-hf-correlator-dplusdminus-mc-rec o2-analysis-hf-task-correlation-ddbar-mc-rec"
   [ $DOO2_DPLUSDMINUS_MCGEN -eq 1 ] && WF_CORR="o2-analysis-hf-correlator-dplusdminus-mc-gen o2-analysis-hf-task-correlation-ddbar-mc-gen"
+  [ $DOO2_TASK_CORRD0 -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-task-hfcorrelations"
   [ "$WF_CORR" ] && WORKFLOWS+=" $WF_CORR"
   # Tree creators
   [ $DOO2_TREE_D0 -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-tree-creator-d0-tokpi"
