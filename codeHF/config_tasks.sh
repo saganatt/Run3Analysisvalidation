@@ -14,11 +14,11 @@
 ####################################################################################################
 
 # Steps
-DOCLEAN=1           # Delete created files (before and after running tasks).
+DOCLEAN=0           # Delete created files (before and after running tasks).
 DOCONVERT=1         # Convert AliESDs.root to AO2D.root.
 DOALI=1             # Run AliPhysics tasks.
 DOO2=1              # Run O2 tasks.
-DOPOSTPROCESS=1     # Run output postprocessing. (Compare AliPhysics and O2 output.)
+DOPOSTPROCESS=0     # Run output postprocessing. (Compare AliPhysics and O2 output.)
 
 # Disable incompatible steps.
 [ "$ISINPUTO2" -eq 1 ] && { DOCONVERT=0; DOALI=0; }
@@ -85,14 +85,14 @@ DOO2_D0D0BAR_MCGEN=0     # hf-correlator-d0d0bar-mc-gen
 DOO2_DPLUSDMINUS_DATA=0  # hf-correlator-dplusdminus
 DOO2_DPLUSDMINUS_MCREC=0 # hf-correlator-dplusdminus-mc-rec
 DOO2_DPLUSDMINUS_MCGEN=0 # hf-correlator-dplusdminus-mc-gen
-DOO2_TASK_FLOW=0  # hf-task-flow
+DOO2_TASK_FLOW=1  # hf-task-flow
 # Other
 DOO2_MCCONV=0       # mc-converter
 DOO2_FDDCONV=0      # fdd-converter
 DOO2_TRKPROP=0      # track-propagation
 
 # Selection cuts
-APPLYCUTS_D0=0      # Apply D0 selection cuts.
+APPLYCUTS_D0=1      # Apply D0 selection cuts.
 APPLYCUTS_DPLUS=0   # Apply D+ selection cuts.
 APPLYCUTS_LC=0      # Apply Λc selection cuts.
 APPLYCUTS_XIC=0     # Apply Ξc selection cuts.

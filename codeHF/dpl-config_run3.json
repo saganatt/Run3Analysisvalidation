@@ -998,7 +998,7 @@
         "cfgCutPt": "0.2",
         "d_selectionFlagD0": "0",
         "d_selectionFlagD0bar": "0",
-        "cutYCandMax": "1.0",
+        "cutYCandMax": "0.8",
         "pTBins": {
             "values": [
                 "0",
@@ -1134,11 +1134,12 @@
         },
         "processSameTPCTPChh": "false",
         "processSameTPCMFThh": "false",
-        "processSameHFHadrons": "true",
+        "processSameHFHadrons": "false",
         "debugMode": "true",
         "cfgNoMixedEvents": 5,
-        "processMixedTPCTPChh": "true",
-        "processMixedHFHadrons": "true",
+        "processMixedTPCTPChh": "false",
+        "processMixedHFHadrons": "false",
+        "processSameRun2Simple": "false",
         "processRun2": "true",
         "processRun3": "false"
     },
