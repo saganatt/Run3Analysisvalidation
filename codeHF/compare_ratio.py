@@ -2,33 +2,25 @@
 
 """
 Compare histograms from a single file by producing their ratios.
-Use: ./compare_ratio.py AnalysisResults_O2.root
+Arguments: input file, output file without extension
+Use: ./compare_ratio.py AnalysisResults_O2.root Ratios
 """
 
 import argparse
 
-from ROOT import TH1, TCanvas, TColor, TFile, TLegend, gPad
+from ROOT import TH1, TCanvas, TColor, TFile, TLegend, gPad, gROOT
 
-histnames = ["hptcand_befsel", "hptcand_wrongdecay", "hptcand_wrongy", "hptcand"]
+histnames = ["hPtCand_befsel", "hPtCand_wrongdecay", "hPtCand_wrongy", "hPtCand"]
 mc_histnames = ["hPtRecSig", "hPtRecBg", "hPtRecSigPrompt", "hPtRecSigNonPrompt"]
 d0task = "hf-task-d0"
-corrtask = "task-hf-correlations"
+corrtask = "hf-task-flow"
 
-def save_ratios(ratios):
-    for obj in ratios:
-        obj.SaveAs("Ratios.pdf")
-
-    fout = TFile("Ratios.root", "RECREATE")
-    for obj in ratios:
-        print("Writing", obj.GetName())
-        obj.Write(obj.GetName().replace("/", "_folder_"))
-    fout.Close()
-
-
-def main(file):
+def main(file, outfile):
+    gROOT.SetBatch(True)
+    print(f"Processing file {file}")
     f = TFile(file)
+    fout = TFile(f"{outfile}.root", "RECREATE")
     ratios = []
-    drawn = {}
 
     for hn in histnames:
         print(f"Drawing ratio for {hn}")
@@ -40,22 +32,38 @@ def main(file):
         c = TCanvas(hn, hn)
         c.cd()
         ratio.Draw()
-        ratios.append(ratio)
-        drawn[hn] = [c, ratio]
+
+        ratio.Write(ratio.GetName().replace("/", "_folder_"))
 
         for i in range(ratio.GetNbinsX()):
             binc = ratio.GetBinContent(i)
             binhd0 = hd0.GetBinContent(i)
             binhcorr = hcorr.GetBinContent(i)
             if binc != 1.0 and binc != 0.0:
-                print(f"Bin: {i} contains: {binc}, d0: {binhd0}, hcorr: {binhcorr}")
+                print(f"Bin: {i} contains: {binc}, d0: {binhd0}, hfcorr: {binhcorr}")
 
-    save_ratios(ratios)
+        ol = f"both_{hn}"
+        c2 = TCanvas(ol, ol)
+        c2.cd()
+        hd0.SetLineColor(TColor.GetColor("#e41a1c"))
+        hd0.DrawClone()
+        hcorr.SetLineColor(TColor.GetColor("#377eb8"))
+        hcorr.DrawClone("same")
 
+        d0_entries = hd0.GetEntries()
+        corr_entries = hcorr.GetEntries()
+        if d0_entries != corr_entries:
+            raise ValueError(f"Different number of entries! d0: {d0_entries} hcorr: {corr_entries} hist: {hn}")
+
+        c2.Write(ol)
+        c2.SaveAs(f"{outfile}_{ol}.png")
+
+    fout.Close()
 
 if __name__ == "__main__":
     pass
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("file", type=str, help="Input file")
+    parser.add_argument("outfile", type=str, help="Output file")
     args = parser.parse_args()
-    main(file=args.file)
+    main(file=args.file, outfile=args.outfile)

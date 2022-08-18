@@ -9,12 +9,12 @@ To run your comparison between AnalysisResults1.root AnalysisResults2.root you c
 
 import argparse
 
-from ROOT import TH1, TCanvas, TColor, TFile, TLegend, gPad
+from ROOT import TH1, TCanvas, TColor, TFile, TLegend, gPad, gROOT
 
-histnames = ["hptcand_befsel", "hptcand_wrongdecay", "hptcand_wrongy", "hptcand"]
+histnames = ["hptcand_befsel", "hptcand_wrongdecay", "hptcand_wrongy", "hPtCand"]
 mc_histnames = ["hPtRecSig", "hPtRecBg", "hPtRecSigPrompt", "hPtRecSigNonPrompt"]
 d0task = "hf-task-d0"
-corrtask = "task-hf-correlations"
+corrtask = "hf-task-flow"
 
 def compare(objs, add_leg_title=True, normalize=True):
     print("Comparing")
@@ -111,6 +111,7 @@ def get_selected_histos(file, d0 = True, corr = True):
     return h
 
 def main(file):
+    gROOT.SetBatch(True)
     f = TFile(file)
 
     #h = traverse_file(f)
