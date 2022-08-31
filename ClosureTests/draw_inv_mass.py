@@ -13,6 +13,9 @@ from ROOT import TH1, TH2, TCanvas, TFile, gROOT
 d0task = "hf-task-d0"
 flowtask = "hf-task-flow"
 
+pt_d0_to_pik = [1.61, 2.12] # cuts used during skimming
+pt_range_an = [1.7, 2.05] # inv mass x-range in the AN
+
 ptbins = [1, 2, 4, 6, 8, 12, 24]
 nptbins = len(ptbins)
 
@@ -30,6 +33,8 @@ def main(file, outfile, task):
 
         hname = f"hMass_{binmin}-{binmax}"
         hMassProj = hMass.ProjectionX(hname, ind + 1, ind + 2)
+        #hMassProj.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
+        hMassProj.GetXaxis().SetRangeUser(pt_range_an[0], pt_range_an[1])
 
         c = TCanvas(hname, hname)
         c.cd()
