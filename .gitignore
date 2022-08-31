@@ -1,7 +1,9 @@
 *.root
 *.pdf
 *.log
+*.png
 megalinter-reports/
 .DS_Store
 .mypy_cache/
 github_conf/
+report/
