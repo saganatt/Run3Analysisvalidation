@@ -184,7 +184,7 @@ def main(file, outfile, task, drawMore):
         hMassProj = hMass.ProjectionX(hname, ind + 1, ind + 2)
         #hMassProj.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
         hMassProj.GetXaxis().SetRangeUser(pt_range_an[0], pt_range_an[1])
-        hMassProj.SetTitle("%s < #it{p}_{T} < %s" % (binmin, binmax))
+        hMassProj.SetTitle("%s #leq #it{p}_{T} < %s" % (binmin, binmax))
         hMassProj.SetMarkerStyle(kFullCircle)
         hMassProj.SetLineColor(kBlack)
         hMassProj.SetMarkerColor(kBlack)
