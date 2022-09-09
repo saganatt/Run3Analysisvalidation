@@ -24,7 +24,7 @@ sig_range = [1.85, 1.9]
 nptbins = len(ptbins)
 
 def background(x, params):
-    if x[0] > sig_init_range[0] and x[0] < sig_init_range[1]:
+    if x[0] > sig_range[0] and x[0] < sig_range[1]:
         TF1.RejectPoint()
         return 0
     return TMath.Exp(params[0] + params[1] * x[0])
@@ -33,9 +33,15 @@ def signal(x, params):
     if x[0] <= sig_init_range[0] or x[0] >= sig_init_range[1]:
         TF1.RejectPoint()
         return 0
-    if params[2] == 0.:
-        return 0
-    return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2]) * ((x[0] - params[1]) / params[2]))
+    #if params[2] == 0.:
+    #    return 0
+    return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2]) * ((x[0] - params[1]) / params[2])) +\
+            params[3] * TMath.Exp(-0.5 * ((x[0] - params[4]) / params[5]) * ((x[0] - params[4]) / params[5]))
+
+def sigbkg(x, params):
+    return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2]) * ((x[0] - params[1]) / params[2])) +\
+            params[3] * TMath.Exp(-0.5 * ((x[0] - params[4]) / params[5]) * ((x[0] - params[4]) / params[5])) +\
+           TMath.Exp(params[6] + params[7] * x[0])
 
 def gauss_shifted(x, params):
     if x[0] <= sig_init_range[0] or x[0] >= sig_init_range[1]:
@@ -50,25 +56,29 @@ def exp_gauss_shifted(x, params):
         return 0
     return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2]) * ((x[0] - params[1]) / params[2])) + params[3] + TMath.Exp(params[4] + params[5] * x[0])
 
-def sigbkg(x, params):
-    if params[2] == 0.:
-        return 0
-    return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2]) * ((x[0] - params[1]) / params[2])) + TMath.Exp(params[3] + params[4] * x[0])
-
-def fit_sig_bkg(hist):
+def fit_sig_bkg(hist, doMC, mcSigmaSignal = -1, mcSigmaReflBkg = -1):
     params = {}
-    estSigma = (sig_init_range[1] - sig_init_range[0]) / 6.
+    estSigma1 = (sig_init_range[1] - sig_init_range[0]) / 6.
+    estSigma2 = (sig_init_range[1] - sig_init_range[0]) / 6.
+    if doMC:
+        estSigma1 = mcSigmaSignal
+        estSigma2 = mcSigmaReflBkg
+        print(f"MC sigma from signal: {mcSigmaSignal:.3f} reflected background: {mcSigmaReflBkg:.3f}")
+
     estMean = sig_init_range[0] + (sig_init_range[1] - sig_init_range[0]) / 2
-    fitSig = TF1("fitSig", gauss_shifted, sig_init_range[0], sig_init_range[1], 4)
-    fitSig.SetParameters(20000, estMean, estSigma, 5000)
+    fitSig = TF1("fitSig", "gaus(0)+gaus(3)", sig_init_range[0], sig_init_range[1], 6)
+    fitSig.SetParameters(20000, estMean, estSigma1, 20000, estMean, estSigma2)
     hist.Fit(fitSig, "NQ", "", sig_init_range[0], sig_init_range[1])
-    params["scaleSig"] = fitSig.GetParameter(0)
-    params["meanSig"] = fitSig.GetParameter(1)
-    params["sigmaSig"] = fitSig.GetParameter(2)
-    params["shiftSig"] = fitSig.GetParameter(3)
-    sig_range[:] = [params["meanSig"] - 3. * params["sigmaSig"], params["meanSig"] + 3. * params["sigmaSig"]]
-    print(f'Signal parameters: scale: {params["scaleSig"]:.3f} mean: {params["meanSig"]:.3f} '
-            f'sigma: {params["sigmaSig"]:.3f} shift: {params["shiftSig"]:.3f}\n'
+    params["scaleSig1"] = fitSig.GetParameter(0)
+    params["meanSig1"] = fitSig.GetParameter(1)
+    params["sigmaSig1"] = fitSig.GetParameter(2)
+    params["scaleSig2"] = fitSig.GetParameter(3)
+    params["meanSig2"] = fitSig.GetParameter(4)
+    params["sigmaSig2"] = fitSig.GetParameter(5)
+    sig_range[:] = [params["meanSig1"] - 3. * params["sigmaSig1"], params["meanSig1"] + 3. * params["sigmaSig1"]]
+    print(f'Signal parameters: scale: {params["scaleSig1"]:.3f} mean: {params["meanSig1"]:.3f} '
+            f'sigma: {params["sigmaSig1"]:.3f}\nscale: {params["scaleSig2"]:.3f} '
+            f'mean: {params["meanSig2"]:.3f} sigma: {params["sigmaSig2"]:.3f}\n'
             f'Initial signal region: {sig_init_range[0]:.2f}, {sig_init_range[1]:.2f}, '
             f'final: {sig_range[0]:.2f}, {sig_range[1]:.2f}')
 
@@ -78,20 +88,33 @@ def fit_sig_bkg(hist):
     params["scaleBkg"] = fitBkg.GetParameter(1)
     print(f'Background parameters: offset: {params["offsetBkg"]:.3f} scale: {params["scaleBkg"]:.3f}')
 
-    fitSigBkg = TF1("fitSigBkg", exp_gauss_shifted, pt_range_an[0], pt_range_an[1], 6)
-    fitSigBkg.SetParameters(20000, params["meanSig"], params["sigmaSig"], 5000, params["offsetBkg"], params["scaleBkg"])
+    fitSigBkg = TF1("fitSigBkg", "gaus(0)+gaus(3)+expo(6)", pt_range_an[0], pt_range_an[1], 8)
+    fitSigBkg.SetParameters(params["scaleSig1"], params["meanSig1"], params["sigmaSig1"], params["scaleSig2"], params["meanSig2"], params["sigmaSig2"], params["offsetBkg"], params["scaleBkg"])
     hist.Fit(fitSigBkg, "NQ+", "", pt_range_an[0], pt_range_an[1])
-    params["scaleSigBkg"] = fitSigBkg.GetParameter(0)
-    params["meanSigBkg"] = fitSigBkg.GetParameter(1)
-    params["sigmaSigBkg"] = fitSigBkg.GetParameter(2)
-    params["shiftSigBkg"] = fitSigBkg.GetParameter(3)
+    params["scaleSigBkg1"] = fitSigBkg.GetParameter(0)
+    params["meanSigBkg1"] = fitSigBkg.GetParameter(1)
+    params["sigmaSigBkg1"] = fitSigBkg.GetParameter(2)
+    params["scaleSigBkg2"] = fitSigBkg.GetParameter(0)
+    params["meanSigBkg2"] = fitSigBkg.GetParameter(1)
+    params["sigmaSigBkg2"] = fitSigBkg.GetParameter(2)
     params["offsetSigBkg"] = fitSigBkg.GetParameter(4)
     params["expScaleSigBkg"] = fitSigBkg.GetParameter(5)
-    print(f'Joint fit parameters: scale: {params["scaleSigBkg"]:.3f} mean: {params["meanSigBkg"]:.3f} '
-            f'sigma: {params["sigmaSigBkg"]:.3f} shift: {params["shiftSigBkg"]:.3f} '
+    print(f'Joint fit parameters: scale: {params["scaleSigBkg1"]:.3f} mean: {params["meanSigBkg1"]:.3f} '
+            f'sigma: {params["sigmaSigBkg1"]:.3f}\nscale: {params["scaleSigBkg2"]:.3f} '
+            f'mean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}\n'
             f'offset: {params["offsetSigBkg"]:.3f} exp scale: {params["expScaleSigBkg"]:.3f}')
 
     return params
+
+def draw_inv_mass(hist, binmin, binmax):
+    #hist.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
+    hist.GetXaxis().SetRangeUser(pt_range_an[0], pt_range_an[1])
+    hist.SetTitle("%s #leq #it{p}_{T} < %s" % (binmin, binmax))
+    hist.SetMarkerStyle(kFullCircle)
+    hist.SetLineColor(kBlack)
+    hist.SetMarkerColor(kBlack)
+    #hist.SetMarkerSize(2)
+    hist.Draw("PE")
 
 def get_vertical_line(x, c):
     c.Update()
@@ -110,15 +133,16 @@ def draw_fits(params):
     fBkg.Draw("same")
     fits["fBkg"] = fBkg
 
-    fSig = TF1("fSig", gauss_shifted, sig_init_range[0], sig_init_range[1], 4)
-    fSig.SetParameters(params["scaleSig"], params["meanSig"], params["sigmaSig"], params["shiftSig"])
+    fSig = TF1("fSig", "gaus(0)+gaus(3)", sig_init_range[0], sig_init_range[1], 6)
+    fSig.SetParameters(params["scaleSig1"], params["meanSig1"], params["sigmaSig1"], params["scaleSig2"], params["meanSig2"], params["sigmaSig2"])
     fSig.SetLineColor(kGreen)
     fSig.Draw("same")
     fits["fSig"] = fSig
 
-    fSigBkg = TF1("fSigBkg", exp_gauss_shifted, pt_range_an[0], pt_range_an[1], 6)
-    fSigBkg.SetParameters(params["scaleSigBkg"], params["meanSigBkg"], params["sigmaSigBkg"],
-                          params["shiftSigBkg"], params["offsetSigBkg"], params["expScaleSigBkg"])
+    fSigBkg = TF1("fSigBkg", "gaus(0)+gaus(3)+expo(6)", pt_range_an[0], pt_range_an[1], 8)
+    fSigBkg.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"],
+                          params["scaleSigBkg2"], params["meanSigBkg2"], params["sigmaSigBkg2"],
+                          params["offsetSigBkg"], params["expScaleSigBkg"])
     fSigBkg.SetLineColor(kBlue)
     fSigBkg.Draw("same")
     fits["fSigBkg"] = fSigBkg
@@ -163,18 +187,56 @@ def shade_signal(c, fits):
 
     return gr
 
-def main(file, outfile, task, drawMore):
+def fit_mc(hMassMC, histname, binmin, binmax):
+    ind1 = hMassMC.FindBin(binmin)
+    ind2 = hMassMC.FindBin(binmax)
+
+    hname = f"{histname}_{binmin}-{binmax}"
+    c = TCanvas(hname, hname)
+    c.cd()
+
+    # Draw invariant mass distribution
+    hMassProjMC = hMassMC.ProjectionX(ind1, ind2)
+    draw_inv_mass(hMassProjMC, binmin, binmax)
+
+    # Fit signal
+    params = {}
+
+    # Draw histogram and fits
+
+    c.Write(hname)
+    c.SaveAs(f"{outfile}_{hname}.png")
+
+    return params
+
+def main(file, outfile, task, drawMore, doMC):
     gROOT.SetBatch(True)
     print(f"Processing file {file}")
     f = TFile(file)
     fout = TFile(f"{outfile}.root", "RECREATE")
 
     hMass = f.Get(f"{task}/hMass")
+    if doMC:
+        hMassSigD0 = f.Get(f"{task}/hMassSigD0")
+        hMassReflBkgD0 = f.Get(f"{task}/hMassReflBkgD0")
 
     for ind in range(nptbins - 1):
         binmin = ptbins[ind]
         binmax = ptbins[ind + 1]
         print(f"Processing pT bin: [{binmin}, {binmax})")
+
+        if doMC:
+            print("-" * 40)
+            print("Fitting MC signal")
+            mc_sig_params = fit_mc(hMassSigD0, "hMassSigD0", binmin, binmax)
+            #mcSigmaSignal = mc_sig_params["sigma"]
+            print("-" * 40)
+            print("Fitting MC reflected background")
+            mc_bkg_params = fit_mc(hMassReflBkgD0, "hMassReflBkgD0", binmin, binmax)
+            #mcSigmaReflBkg = mc_bkg_params["sigma"]
+            print("-" * 40)
+        mcSigmaSignal = -1
+        mcSigmaReflBkg = -1
 
         hname = f"hMass_{binmin}-{binmax}"
         c = TCanvas(hname, hname)
@@ -182,17 +244,10 @@ def main(file, outfile, task, drawMore):
 
         # Draw invariant mass distribution
         hMassProj = hMass.ProjectionX(hname, ind + 1, ind + 2)
-        #hMassProj.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
-        hMassProj.GetXaxis().SetRangeUser(pt_range_an[0], pt_range_an[1])
-        hMassProj.SetTitle("%s #leq #it{p}_{T} < %s" % (binmin, binmax))
-        hMassProj.SetMarkerStyle(kFullCircle)
-        hMassProj.SetLineColor(kBlack)
-        hMassProj.SetMarkerColor(kBlack)
-        #hMassProj.SetMarkerSize(2)
-        hMassProj.Draw("PE")
+        draw_inv_mass(hMassProj, binmin, binmax)
 
         # Fit signal and background
-        params = fit_sig_bkg(hMassProj)
+        params = fit_sig_bkg(hMassProj, doMC, mcSigmaSignal, mcSigmaReflBkg)
 
         # Draw histogram and fits
         fits = draw_fits(params)
@@ -226,8 +281,9 @@ if __name__ == "__main__":
     parser.add_argument("outfile", type=str, help="Output file")
     parser.add_argument("task", type=str, help="HF final task name")
     parser.add_argument("--draw", default=False, action="store_true", help="Draw vertical lines and shade signal area")
+    parser.add_argument("--doMC", default=False, action="store_true", help="Process MC histograms")
     args = parser.parse_args()
     task = d0task
     if args.task == "flow":
         task = flowtask
-    main(file=args.file, outfile=args.outfile, task=task, drawMore=args.draw)
+    main(file=args.file, outfile=args.outfile, task=task, drawMore=args.draw, doMC=args.doMC)
