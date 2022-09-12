@@ -19,9 +19,14 @@ pt_d0_to_pik = [1.61, 2.12] # cuts used during skimming
 pt_range_an = [1.7, 2.05] # inv mass x-range in the AN
 
 ptbins = [1, 2, 4, 6, 8, 12, 24]
+nptbins = len(ptbins)
+
 sig_init_range = [1.85, 1.9]
 sig_range = [1.85, 1.9]
-nptbins = len(ptbins)
+sig_mc_init_range = [1.84, 1.89]
+sig_mc_range = [1.84, 1.89]
+bkg_mc_init_range = [1.61, 2.12]
+bkg_mc_range = [1.61, 2.12]
 
 def background(x, params):
     if x[0] > sig_range[0] and x[0] < sig_range[1]:
@@ -187,7 +192,7 @@ def shade_signal(c, fits):
 
     return gr
 
-def fit_mc(hMassMC, histname, binmin, binmax):
+def fit_mc(hMassMC, histname, outfile, binmin, binmax):
     ind1 = hMassMC.FindBin(binmin)
     ind2 = hMassMC.FindBin(binmax)
 
@@ -196,13 +201,32 @@ def fit_mc(hMassMC, histname, binmin, binmax):
     c.cd()
 
     # Draw invariant mass distribution
-    hMassProjMC = hMassMC.ProjectionX(ind1, ind2)
+    binsZ = hMassMC.GetNbinsZ()
+    hMassProjMC = hMassMC.ProjectionX(hname, ind1, ind2, 1, binsZ)
     draw_inv_mass(hMassProjMC, binmin, binmax)
 
-    # Fit signal
+    # Fit
     params = {}
+    estSigma = (sig_mc_init_range[1] - sig_mc_init_range[0]) / 6.
 
-    # Draw histogram and fits
+    estMean = sig_mc_init_range[0] + (sig_mc_init_range[1] - sig_mc_init_range[0]) / 2
+    fitSig = TF1("fitSig", "gaus", sig_mc_init_range[0], sig_mc_init_range[1], 6)
+    fitSig.SetParameters(20000, estMean, estSigma)
+    hMassProjMC.Fit(fitSig, "NQ", "", sig_mc_init_range[0], sig_mc_init_range[1])
+    params["scale"] = fitSig.GetParameter(0)
+    params["mean"] = fitSig.GetParameter(1)
+    params["sigma"] = fitSig.GetParameter(2)
+    sig_mc_range[:] = [params["mean"] - 3. * params["sigma"], params["mean"] + 3. * params["sigma"]]
+    print(f'MC parameters: scale: {params["scale"]:.3f} mean: {params["mean"]:.3f} '
+            f'sigma: {params["sigma"]:.3f}\n'
+            f'Initial region: {sig_mc_init_range[0]:.2f}, {sig_mc_init_range[1]:.2f}, '
+            f'final: {sig_mc_range[0]:.2f}, {sig_mc_range[1]:.2f}')
+
+    # Draw histogram and fit
+    fSig = TF1("fSig", "gaus(0)", sig_mc_init_range[0], sig_mc_init_range[1], 6)
+    fSig.SetParameters(params["scale"], params["mean"], params["sigma"])
+    fSig.SetLineColor(kGreen)
+    fSig.Draw("same")
 
     c.Write(hname)
     c.SaveAs(f"{outfile}_{hname}.png")
@@ -228,15 +252,16 @@ def main(file, outfile, task, drawMore, doMC):
         if doMC:
             print("-" * 40)
             print("Fitting MC signal")
-            mc_sig_params = fit_mc(hMassSigD0, "hMassSigD0", binmin, binmax)
-            #mcSigmaSignal = mc_sig_params["sigma"]
+            mc_sig_params = fit_mc(hMassSigD0, "hMassSigD0", outfile, binmin, binmax)
+            mcSigmaSignal = mc_sig_params["sigma"]
             print("-" * 40)
             print("Fitting MC reflected background")
-            mc_bkg_params = fit_mc(hMassReflBkgD0, "hMassReflBkgD0", binmin, binmax)
-            #mcSigmaReflBkg = mc_bkg_params["sigma"]
+            mc_bkg_params = fit_mc(hMassReflBkgD0, "hMassReflBkgD0", outfile, binmin, binmax)
+            mcSigmaReflBkg = mc_bkg_params["sigma"]
             print("-" * 40)
-        mcSigmaSignal = -1
-        mcSigmaReflBkg = -1
+        else:
+            mcSigmaSignal = -1
+            mcSigmaReflBkg = -1
 
         hname = f"hMass_{binmin}-{binmax}"
         c = TCanvas(hname, hname)
