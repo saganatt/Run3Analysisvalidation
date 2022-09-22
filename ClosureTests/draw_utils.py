@@ -34,12 +34,12 @@ def draw_fits(params, hist_range, sig_range):
     fBkg.Draw("same")
     fits["fBkg"] = fBkg
 
-    fSig = TF1("fSig", "gaus(0)+gaus(3)", sig_range[0], sig_range[1], 6)
-    fSig.SetParameters(params["scaleSig1"], params["meanSig1"], params["sigmaSig1"],
-                       params["scaleSig2"], params["meanSig2"], params["sigmaSig2"])
-    fSig.SetLineColor(kGreen)
-    fSig.Draw("same")
-    fits["fSig"] = fSig
+    #fSig = TF1("fSig", "gaus(0)+gaus(3)", sig_range[0], sig_range[1], 6)
+    #fSig.SetParameters(params["scaleSig1"], params["meanSig1"], params["sigmaSig1"],
+    #                   params["scaleSig2"], params["meanSig2"], params["sigmaSig2"])
+    #fSig.SetLineColor(kGreen)
+    #fSig.Draw("same")
+    #fits["fSig"] = fSig
 
     fSigBkg = TF1("fSigBkg", "gaus(0)+gaus(3)+expo(6)", hist_range[0], hist_range[1], 8)
     fSigBkg.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"],
@@ -56,6 +56,7 @@ def draw_mc_fit(params, sig_range):
     fSig.SetParameters(params["scale"], params["mean"], params["sigma"])
     fSig.SetLineColor(kGreen)
     fSig.Draw("same")
+    return fSig
 
 def draw_mc_raw(mchist, hname, outfile):
     cdeb = TCanvas(hname, hname)
@@ -74,7 +75,7 @@ def shade_signal(c, fits, sig_range):
     xmin = sig_range[0]
     xmax = sig_range[1]
 
-    npx = fits["fSig"].GetNpx()
+    npx = fits["fSigBkg"].GetNpx()
     npoints = 0
     dx = (xmax - xmin) / npx
 
@@ -103,9 +104,9 @@ def shade_signal(c, fits, sig_range):
     return gr
 
 def draw_more(sig_range, fits, c):
-    lMin = draw_utils.get_vertical_line(sig_range[0], c)
+    lMin = get_vertical_line(sig_range[0], c)
     lMin.Draw("same")
-    lMax = draw_utils.get_vertical_line(sig_range[1], c)
+    lMax = get_vertical_line(sig_range[1], c)
     lMax.Draw("same")
-    gr = draw_utils.shade_signal(c, fits, sig_range)
+    gr = shade_signal(c, fits, sig_range)
     gr.Draw("f")
