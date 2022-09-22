@@ -111,7 +111,6 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
         hname = f"hMass_{binmin}-{binmax}"
         c = TCanvas(hname, hname)
         c.cd()
-        c.SetLogy()
 
         # Draw invariant mass distribution
         hMassProj = hMass.ProjectionX(hname, ind + 1, ind + 2)

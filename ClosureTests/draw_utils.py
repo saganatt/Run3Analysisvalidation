@@ -7,6 +7,8 @@ Drawing utils for the invariant mass script
 from ROOT import TF1, TLine, TCanvas, TGraph # pylint: disable=import-error
 from ROOT import kFullCircle, kDashed, kBlack, kGreen, kBlue, kRed, kGray # pylint: disable=import-error
 
+from fit_utils import gausn_gausn_expo, gauss_root, gausn, expo
+
 def draw_inv_mass(hist, pt_range, hist_range):
     #hist.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
     hist.GetXaxis().SetRangeUser(hist_range[0], hist_range[1])
@@ -28,7 +30,7 @@ def get_vertical_line(x, c):
 
 def draw_fits(params, hist_range, sig_range):
     fits = {}
-    fBkg = TF1("fBkg", "expo", hist_range[0], hist_range[1])
+    fBkg = TF1("fBkg", expo, hist_range[0], hist_range[1], 2)
     fBkg.SetParameters(params["offsetBkg"], params["scaleBkg"])
     fBkg.SetLineColor(kRed)
     fBkg.Draw("same")
@@ -41,7 +43,7 @@ def draw_fits(params, hist_range, sig_range):
     #fSig.Draw("same")
     #fits["fSig"] = fSig
 
-    fSigBkg = TF1("fSigBkg", "gaus(0)+gaus(3)+expo(6)", hist_range[0], hist_range[1], 8)
+    fSigBkg = TF1("fSigBkg", gausn_gausn_expo, hist_range[0], hist_range[1], 8)
     fSigBkg.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"],
                           params["scaleSigBkg2"], params["meanSigBkg2"], params["sigmaSigBkg2"],
                           params["offsetSigBkg"], params["expScaleSigBkg"])
@@ -52,8 +54,8 @@ def draw_fits(params, hist_range, sig_range):
     return fits
 
 def draw_mc_fit(params, sig_range):
-    fSig = TF1("fSig", "gaus", sig_range[0], sig_range[1], 6)
-    fSig.SetParameters(params["scale"], params["mean"], params["sigma"])
+    fSig = TF1("fSig", gausn, sig_range[0], sig_range[1], 4)
+    fSig.SetParameters(params["scale"], params["mean"], params["sigma"], params["scale2"])
     fSig.SetLineColor(kGreen)
     fSig.Draw("same")
     return fSig
