@@ -46,10 +46,11 @@ def background(x, params):
 def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params):
     params = {}
 
-    #for i in range(hist.GetNbinsX()):
-    #    unc = hist.GetBinError(i)
-    #    pt = hist.GetBinCenter(i)
-    #    print(f"Uncertainty for bin {i}, pt: {pt}: {unc}")
+    for i in range(hist.GetNbinsX()):
+        if hist.GetBinCenter(i) > ranges.pt_range_an[0] and hist.GetBinCenter(i) < ranges.pt_range_an[1]:
+            unc = hist.GetBinError(i)
+            pt = hist.GetBinCenter(i)
+            print(f"Uncertainty for bin {i}, pt {pt:.3f}: {unc:.3f}")
 
     fitBkg = TF1("fitBkg", background, full_range[0], full_range[1], 2)
     hist.Fit(fitBkg, "NQ", "", full_range[0], full_range[1])
@@ -67,15 +68,15 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params)
     else:
         estSigma1 = (sig_range[1] - sig_range[0]) / 6.
         estSigma2 = (sig_range[1] - sig_range[0]) / 6.
-        estMean1 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2
-        estMean2 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2
+        estMean1 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
+        estMean2 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
 
     fitSigBkg = TF1("fitSigBkg", gausn_gausn_expo,
                     full_range[0], full_range[1], 8)
-    #fitSigBkg.SetParameter(0, 5000)
+    fitSigBkg.SetParameter(0, 100)
     fitSigBkg.SetParameter(1, estMean1)
     fitSigBkg.SetParameter(2, estSigma1)
-    #fitSigBkg.SetParameter(3, 5000)
+    fitSigBkg.SetParameter(3, 200)
     fitSigBkg.SetParameter(4, estMean2)
     fitSigBkg.SetParameter(5, estSigma2)
     fitSigBkg.SetParameter(6, params["offsetBkg"])
@@ -95,7 +96,7 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params)
           f'mean: {params["meanSigBkg1"]:.3f} '
           f'sigma: {params["sigmaSigBkg1"]:.3f}'
           f'\nscale: {params["scaleSigBkg2"]:.3f} '
-          f'mean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}\n'
+          f'mean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}'
           f'\noffset: {params["offsetSigBkg"]:.3f} exp scale: {params["expScaleSigBkg"]:.3f}'
           f'\nrange: {full_range[0]:.2f} {full_range[1]:.2f}')
 
@@ -108,7 +109,7 @@ def fit_mc(hMassProjMC, init_range, fin_range, init_scale):
     estMean = init_range[0] + (init_range[1] - init_range[0]) / 2
     fitSig = TF1("fitSig", gausn_root, init_range[0], init_range[1], 4)
     fitSig.SetParameters(init_scale, estMean, estSigma)
-    #fitSig.SetParameter(1, estMean)
+    #fitSig.SetParameter(1, estMean) # these 2 lines do not affect the results for pT [6, 8)
     #fitSig.SetParameter(2, estSigma)
     hMassProjMC.Fit(fitSig, "NQ", "", init_range[0], init_range[1])
     params["scale"] = fitSig.GetParameter(0)

@@ -47,7 +47,7 @@ def draw_fits(params, hist_range, sig_range):
 
     real_sig_range = [params["meanSigBkg1"] - 3 * params["sigmaSigBkg1"],
                       params["meanSigBkg1"] + 3 * params["sigmaSigBkg1"]]
-    fSig = TF1("fSig", gausn_root, sig_range[0], sig_range[1], 3)
+    fSig = TF1("fSig", gausn_root, real_sig_range[0], real_sig_range[1], 3)
     fSig.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"])
     fSig.SetLineColor(kGreen)
     fSig.Draw("same")
