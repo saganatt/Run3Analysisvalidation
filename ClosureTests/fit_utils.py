@@ -19,15 +19,16 @@ def gausn_root(x, params):
     return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2])**2) /\
             (params[2] * TMath.Sqrt(TMath.TwoPi()))
 
-def gausn(x, params):
-    return (params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2])**2) /\
-            (params[2] * TMath.Sqrt(TMath.TwoPi()))) * params[3]
-
 def gausn_gausn(x, params):
     return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2])**2) /\
             (params[2] * TMath.Sqrt(TMath.TwoPi())) +\
             params[3] * TMath.Exp(-0.5 * ((x[0] - params[4]) / params[5])**2) /\
             (params[5] * TMath.Sqrt(TMath.TwoPi()))
+
+def gausn_expo(x, params):
+    return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2])**2) /\
+            (params[2] * TMath.Sqrt(TMath.TwoPi())) +\
+            TMath.Exp(params[3] + params[4] * x[0])
 
 def gausn_gausn_expo(x, params):
     return params[0] * TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2])**2) /\
@@ -70,7 +71,7 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params)
         estMean2 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2
 
     fitSigBkg = TF1("fitSigBkg", gausn_gausn_expo,
-                 full_range[0], full_range[1], 8)
+                    full_range[0], full_range[1], 8)
     #fitSigBkg.SetParameter(0, 5000)
     fitSigBkg.SetParameter(1, estMean1)
     fitSigBkg.SetParameter(2, estSigma1)
@@ -89,32 +90,33 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params)
     params["sigmaSigBkg2"] = fitSigBkg.GetParameter(5)
     params["offsetSigBkg"] = fitSigBkg.GetParameter(6)
     params["expScaleSigBkg"] = fitSigBkg.GetParameter(7)
-    print(f'Joint fit parameters: scale: {params["scaleSigBkg1"]:.3f} '
+    print(f'Joint fit parameters: '
+          f'scale: {params["scaleSigBkg1"]:.3f} '
           f'mean: {params["meanSigBkg1"]:.3f} '
-          f'sigma: {params["sigmaSigBkg1"]:.3f}\nscale: {params["scaleSigBkg2"]:.3f} '
+          f'sigma: {params["sigmaSigBkg1"]:.3f}'
+          f'\nscale: {params["scaleSigBkg2"]:.3f} '
           f'mean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}\n'
-          f'offset: {params["offsetSigBkg"]:.3f} exp scale: {params["expScaleSigBkg"]:.3f}\n'
-          f'range: {full_range[0]:.2f} {full_range[1]:.2f}')
+          f'\noffset: {params["offsetSigBkg"]:.3f} exp scale: {params["expScaleSigBkg"]:.3f}'
+          f'\nrange: {full_range[0]:.2f} {full_range[1]:.2f}')
 
     return params
 
-def fit_mc(hMassProjMC, init_range, fin_range):
+def fit_mc(hMassProjMC, init_range, fin_range, init_scale):
     params = {}
     estSigma = (init_range[1] - init_range[0]) / 6.
 
     estMean = init_range[0] + (init_range[1] - init_range[0]) / 2
-    fitSig = TF1("fitSig", gausn, init_range[0], init_range[1], 4)
-    #fitSig.SetParameters(20000, estMean, estSigma)
-    fitSig.SetParameter(1, estMean)
-    fitSig.SetParameter(2, estSigma)
+    fitSig = TF1("fitSig", gausn_root, init_range[0], init_range[1], 4)
+    fitSig.SetParameters(init_scale, estMean, estSigma)
+    #fitSig.SetParameter(1, estMean)
+    #fitSig.SetParameter(2, estSigma)
     hMassProjMC.Fit(fitSig, "NQ", "", init_range[0], init_range[1])
     params["scale"] = fitSig.GetParameter(0)
     params["mean"] = fitSig.GetParameter(1)
     params["sigma"] = fitSig.GetParameter(2)
-    params["scale2"] = fitSig.GetParameter(3)
     fin_range[:] = [params["mean"] - 3. * params["sigma"], params["mean"] + 3. * params["sigma"]]
     print(f'MC parameters: scale: {params["scale"]:.3f} mean: {params["mean"]:.3f} '
-          f'sigma: {params["sigma"]:.3f} scale2: {params["scale2"]:.3f}\n'
+          f'sigma: {params["sigma"]:.3f}\n'
           f'Initial region: {init_range[0]:.2f}, {init_range[1]:.2f}, '
           f'final: {fin_range[0]:.2f}, {fin_range[1]:.2f}')
     return params

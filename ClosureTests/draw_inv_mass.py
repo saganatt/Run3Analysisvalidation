@@ -7,7 +7,7 @@ Arguments: input file, input MC file, output file without extension,
 Use: ./draw_inv_mass.py AnalysisResults.root MC_AnalysisResults.root Results d0 --doMC
 """
 
-# pylint: disable=missing-function-docstring, invalid-name, too-many-locals, too-many-arguments
+# pylint: disable=missing-function-docstring, invalid-name, too-many-arguments, too-many-locals
 
 import argparse
 
@@ -27,30 +27,28 @@ def calculate_yield(fits, int_range):
     intAll = fits["fSigBkg"].Integral(int_range[0], int_range[1])
     intSig = fits["fSig"].Integral(int_range[0], int_range[1])
     intBkg = fits["fBkg"].Integral(int_range[0], int_range[1])
-    yieldSig = intAll - intBkg
-    print(f"Full integral: {intAll:.3f} sig: {intSig:.3f} "
-          f"background: {intBkg:.3f} yield: {yieldSig:.3f}")
+    #intReflBkg = fits["fReflBkg"].Integral(int_range[0], int_range[1])
+    print(f"Full integral: {intAll:.3f} yield=signal: {intSig:.3f} "
+          #f"refl bkg: {intReflBkg:.3f} "
+          f"background: {intBkg:.3f}")
 
-
-def process_mc(hMassMC, histname, outfile, binmin, binmax, init_range, fin_range):
-    ind1 = hMassMC.GetYaxis().FindBin(binmin)
-    ind2 = hMassMC.GetYaxis().FindBin(binmax) - 1 # open upper interval
-
-    print(f"Projecting MC, pt range: {binmin}, {binmax}, found bins: {ind1}, {ind2}")
-
+def process_mc_single(hMassMC, histname, outfile, binmin, binmax,
+                      init_range, fin_range, init_scale):
     hname = f"{histname}_{binmin}-{binmax}"
-    draw_utils.draw_mc_raw(hMassMC, hname, outfile)
+    #draw_utils.draw_mc_raw(hMassMC, hname, outfile)
 
     c = TCanvas(hname, hname)
     c.cd()
 
     # Draw invariant mass distribution
-    binsZ = hMassMC.GetNbinsZ()
-    hMassProjMC = hMassMC.ProjectionX(hname, ind1, ind2, 1, binsZ)
+    ind1 = hMassMC.GetYaxis().FindBin(binmin)
+    ind2 = hMassMC.GetYaxis().FindBin(binmax) - 1 # open upper interval
+    print(f"Projecting MC, pt range: {binmin}, {binmax}, found bins: {ind1}, {ind2}")
+    hMassProjMC = hMassMC.ProjectionX(hname, ind1, ind2, 1, hMassMC.GetNbinsZ())
     draw_utils.draw_inv_mass(hMassProjMC, (binmin, binmax), ranges.pt_range_an)
 
     # Fit
-    params = fit_utils.fit_mc(hMassProjMC, init_range, fin_range)
+    params = fit_utils.fit_mc(hMassProjMC, init_range, fin_range, init_scale)
 
     # Draw histogram and fit
     fSig = draw_utils.draw_mc_fit(params, init_range)
@@ -60,19 +58,49 @@ def process_mc(hMassMC, histname, outfile, binmin, binmax, init_range, fin_range
 
     return params, fSig
 
+def process_mc(hMassSigD0, hMassReflBkgD0, outfile, binmin, binmax):
+    print("-" * 40)
+    print("Fitting MC signal")
+    mc_sig_params, mc_sig_f = process_mc_single(hMassSigD0, "hMassSigD0", outfile,
+                                                binmin, binmax,
+                                                ranges.sig_mc_init_range, ranges.sig_mc_range,
+                                                3000)
+    # Global range needed for background fitting on real data
+    ranges.sig_range[0] = ranges.sig_mc_range[0]
+    ranges.sig_range[1] = ranges.sig_mc_range[1]
+    print("-" * 40)
+    print("Fitting MC reflected background")
+    mc_bkg_params, mc_bkg_f = process_mc_single(hMassReflBkgD0, "hMassReflBkgD0", outfile,
+                                                binmin, binmax,
+                                                ranges.bkg_mc_init_range, ranges.bkg_mc_range,
+                                                300)
+    #ranges.bkg_range[0] = ranges.bkg_mc_range[0]
+    #ranges.bkg_range[1] = ranges.bkg_mc_range[1]
+    print("-" * 40)
+
+    # Ratio of MC sig / refl bkg
+    intMCSig = mc_sig_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
+    intMCBkg = mc_bkg_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
+    intRatio = intMCSig / intMCBkg
+    print(f"MC signal integral: {intMCSig:.3f} reflection background: {intMCBkg:.3f} "
+          f"ratio: {intRatio:.3f}")
+
+    return mc_sig_params, mc_bkg_params
+
 def main(file, mcfile, outfile, task, drawMore, doMC):
     gROOT.SetBatch(True)
+
     print(f"Processing file {file}")
     f = TFile(file)
+    hMass = f.Get(f"{task}/hMass")
+
     if doMC:
         print(f"Processing MC file {mcfile}")
         fMC = TFile(mcfile)
-    fout = TFile(f"{outfile}.root", "RECREATE")
-
-    hMass = f.Get(f"{task}/hMass")
-    if doMC:
         hMassSigD0 = fMC.Get(f"{task}/hMassSigD0")
         hMassReflBkgD0 = fMC.Get(f"{task}/hMassReflBkgD0")
+
+    fout = TFile(f"{outfile}.root", "RECREATE")
 
     for ind in range(nptbins - 1):
         binmin = ptbins[ind]
@@ -80,30 +108,8 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
         print(f"Processing pT bin: [{binmin}, {binmax})")
 
         if doMC:
-            print("-" * 40)
-            print("Fitting MC signal")
-            mc_sig_params, mc_sig_f = process_mc(hMassSigD0, "hMassSigD0", outfile,
-                                                 binmin, binmax,
-                                                 ranges.sig_mc_init_range, ranges.sig_mc_range)
-            # Global range needed for background fitting on real data
-            ranges.sig_range[0] = ranges.sig_mc_range[0]
-            ranges.sig_range[1] = ranges.sig_mc_range[1]
-            print("-" * 40)
-            print("Fitting MC reflected background")
-            mc_bkg_params, mc_bkg_f = process_mc(hMassReflBkgD0, "hMassReflBkgD0", outfile,
-                                                 binmin, binmax,
-                                                 ranges.bkg_mc_init_range, ranges.bkg_mc_range)
-            #ranges.bkg_range[0] = ranges.bkg_mc_range[0]
-            #ranges.bkg_range[1] = ranges.bkg_mc_range[1]
-            print("-" * 40)
-
-            # Ratio of MC sig / refl bkg
-            intMCSig = mc_sig_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
-            intMCBkg = mc_bkg_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
-            intRatio = intMCSig / intMCBkg
-            print(f"MC signal integral: {intMCSig:.3f} reflection background: {intMCBkg:.3f} "
-                  f"ratio: {intRatio:.3f}")
-
+            mc_sig_params, mc_bkg_params = process_mc(hMassSigD0, hMassReflBkgD0, outfile,
+                                                      binmin, binmax)
         else:
             mc_sig_params = {}
             mc_bkg_params = {}
@@ -114,6 +120,7 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
 
         # Draw invariant mass distribution
         hMassProj = hMass.ProjectionX(hname, ind + 1, ind + 2)
+        hMassProj.GetYaxis().SetRangeUser(0, 30000)
         draw_utils.draw_inv_mass(hMassProj, (binmin, binmax), ranges.pt_range_an)
 
         # Fit signal and background
@@ -121,18 +128,14 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
                                        doMC, mc_sig_params, mc_bkg_params)
 
         # Draw histogram and fits
-        fits = draw_utils.draw_fits(params, ranges.pt_range_an, ranges.sig_init_range)
+        fits = draw_utils.draw_fits(params, ranges.pt_range_an, ranges.sig_range)
 
         # Optionally: draw vertical lines and shade signal area
         if drawMore:
             draw_utils.draw_more(ranges.sig_range, fits, c)
 
         # Calculate yield
-        intAll = fits["fSigBkg"].Integral(ranges.sig_range[0], ranges.sig_range[1])
-        #intSig = fits["fSig"].Integral(ranges.sig_range[0], ranges.sig_range[1])
-        intBkg = fits["fBkg"].Integral(ranges.sig_range[0], ranges.sig_range[1])
-        yieldSig = intAll - intBkg
-        print(f"Full integral: {intAll:.3f} background: {intBkg:.3f} yield: {yieldSig:.3f}")
+        calculate_yield(fits, ranges.sig_range)
 
         c.Write(hname)
         c.SaveAs(f"{outfile}_{hname}.png")

@@ -5,9 +5,9 @@ Drawing utils for the invariant mass script
 # pylint: disable=missing-function-docstring, invalid-name
 
 from ROOT import TF1, TLine, TCanvas, TGraph # pylint: disable=import-error
-from ROOT import kFullCircle, kDashed, kBlack, kGreen, kBlue, kRed, kGray # pylint: disable=import-error
+from ROOT import kFullCircle, kDashed, kBlack, kGreen, kBlue, kRed, kGray, kMagenta # pylint: disable=import-error
 
-from fit_utils import gausn_gausn_expo, gauss_root, gausn, expo
+from fit_utils import gausn_gausn_expo, gausn_expo, gauss_root, gausn_root, expo
 
 def draw_inv_mass(hist, pt_range, hist_range):
     #hist.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
@@ -30,18 +30,6 @@ def get_vertical_line(x, c):
 
 def draw_fits(params, hist_range, sig_range):
     fits = {}
-    fBkg = TF1("fBkg", expo, hist_range[0], hist_range[1], 2)
-    fBkg.SetParameters(params["offsetBkg"], params["scaleBkg"])
-    fBkg.SetLineColor(kRed)
-    fBkg.Draw("same")
-    fits["fBkg"] = fBkg
-
-    #fSig = TF1("fSig", "gaus(0)+gaus(3)", sig_range[0], sig_range[1], 6)
-    #fSig.SetParameters(params["scaleSig1"], params["meanSig1"], params["sigmaSig1"],
-    #                   params["scaleSig2"], params["meanSig2"], params["sigmaSig2"])
-    #fSig.SetLineColor(kGreen)
-    #fSig.Draw("same")
-    #fits["fSig"] = fSig
 
     fSigBkg = TF1("fSigBkg", gausn_gausn_expo, hist_range[0], hist_range[1], 8)
     fSigBkg.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"],
@@ -51,11 +39,33 @@ def draw_fits(params, hist_range, sig_range):
     fSigBkg.Draw("same")
     fits["fSigBkg"] = fSigBkg
 
+    fBkg = TF1("fBkg", expo, hist_range[0], hist_range[1], 2)
+    fBkg.SetParameters(params["offsetBkg"], params["scaleBkg"])
+    fBkg.SetLineColor(kRed)
+    fBkg.Draw("same")
+    fits["fBkg"] = fBkg
+
+    real_sig_range = [params["meanSigBkg1"] - 3 * params["sigmaSigBkg1"],
+                      params["meanSigBkg1"] + 3 * params["sigmaSigBkg1"]]
+    fSig = TF1("fSig", gausn_root, sig_range[0], sig_range[1], 3)
+    fSig.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"])
+    fSig.SetLineColor(kGreen)
+    fSig.Draw("same")
+    fits["fSig"] = fSig
+
+    refl_bkg_range = [params["meanSigBkg2"] - 3 * params["sigmaSigBkg2"],
+                      params["meanSigBkg2"] + 3 * params["sigmaSigBkg2"]]
+    fReflBkg = TF1("fReflBkg", gausn_root, refl_bkg_range[0], refl_bkg_range[1], 3)
+    fReflBkg.SetParameters(params["scaleSigBkg2"], params["meanSigBkg2"], params["sigmaSigBkg2"])
+    fReflBkg.SetLineColor(kMagenta)
+    fReflBkg.Draw("same")
+    fits["fReflBkg"] = fReflBkg
+
     return fits
 
 def draw_mc_fit(params, sig_range):
-    fSig = TF1("fSig", gausn, sig_range[0], sig_range[1], 4)
-    fSig.SetParameters(params["scale"], params["mean"], params["sigma"], params["scale2"])
+    fSig = TF1("fSig", gausn_root, sig_range[0], sig_range[1], 3)
+    fSig.SetParameters(params["scale"], params["mean"], params["sigma"])
     fSig.SetLineColor(kGreen)
     fSig.Draw("same")
     return fSig
