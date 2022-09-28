@@ -24,13 +24,18 @@ ptbins = [1, 2, 4, 6, 8, 12, 24]
 nptbins = len(ptbins)
 
 def calculate_yield(fits, int_range):
-    intAll = fits["fSigBkg"].Integral(int_range[0], int_range[1])
-    intSig = fits["fSig"].Integral(int_range[0], int_range[1])
-    intBkg = fits["fBkg"].Integral(int_range[0], int_range[1])
-    #intReflBkg = fits["fReflBkg"].Integral(int_range[0], int_range[1])
-    print(f"Full integral: {intAll:.3f} yield=signal: {intSig:.3f} "
-          #f"refl bkg: {intReflBkg:.3f} "
-          f"background: {intBkg:.3f}")
+    yields = {}
+    yields["all"] = fits["fSigBkg"].Integral(int_range[0], int_range[1])
+    yields["signal"] = fits["fSig"].Integral(int_range[0], int_range[1])
+    yields["refl bkg"] = fits["fReflBkg"].Integral(int_range[0], int_range[1])
+    yields["ratio"] = yields["signal"] / yields["refl bkg"]
+    yields["bkg"] = fits["fBkg"].Integral(int_range[0], int_range[1])
+    print(f'Full integral: {yields["all"]:.3f} '
+          f'yield=signal: {yields["signal"]:.3f} '
+          f'refl bkg: {yields["refl bkg"]:.3f} '
+          f'ratio signal / refl bkg: {yields["ratio"]:.3f} '
+          f'background: {yields["bkg"]:.3f}')
+    return yields
 
 def process_mc_single(hMassMC, histname, outfile, binmin, binmax,
                       init_range, fin_range, init_scale):
@@ -79,13 +84,15 @@ def process_mc(hMassSigD0, hMassReflBkgD0, outfile, binmin, binmax):
     print("-" * 40)
 
     # Ratio of MC sig / refl bkg
-    intMCSig = mc_sig_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
-    intMCBkg = mc_bkg_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
-    intRatio = intMCSig / intMCBkg
-    print(f"MC signal integral: {intMCSig:.3f} reflection background: {intMCBkg:.3f} "
-          f"ratio: {intRatio:.3f}")
+    mc_yields = {}
+    mc_yields["signal"] = mc_sig_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
+    mc_yields["bkg"] = mc_bkg_f.Integral(ranges.sig_mc_range[0], ranges.sig_mc_range[1])
+    mc_yields["ratio"] = mc_yields["signal"] / mc_yields["bkg"]
+    print(f'MC signal integral: {mc_yields["signal"]:.3f} '
+          f'reflection background: {mc_yields["bkg"]:.3f} '
+          f'ratio: {mc_yields["ratio"]:.3f}')
 
-    return mc_sig_params, mc_bkg_params
+    return mc_sig_params, mc_bkg_params, mc_yields
 
 def main(file, mcfile, outfile, task, drawMore, doMC):
     gROOT.SetBatch(True)
@@ -108,11 +115,13 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
         print(f"Processing pT bin: [{binmin}, {binmax})")
 
         if doMC:
-            mc_sig_params, mc_bkg_params = process_mc(hMassSigD0, hMassReflBkgD0, outfile,
-                                                      binmin, binmax)
+            mc_sig_params, mc_bkg_params, mc_yields = process_mc(hMassSigD0, hMassReflBkgD0,
+                                                                      outfile,
+                                                                      binmin, binmax)
         else:
             mc_sig_params = {}
             mc_bkg_params = {}
+            mc_yields = {100, 200}
 
         hname = f"hMass_{binmin}-{binmax}"
         c = TCanvas(hname, hname)
@@ -125,7 +134,7 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
 
         # Fit signal and background
         params = fit_utils.fit_sig_bkg(hMassProj, ranges.sig_range, ranges.pt_range_an,
-                                       doMC, mc_sig_params, mc_bkg_params)
+                                       doMC, mc_sig_params, mc_bkg_params, mc_yields)
 
         # Draw histogram and fits
         fits = draw_utils.draw_fits(params, ranges.pt_range_an, ranges.sig_range)
@@ -135,7 +144,7 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
             draw_utils.draw_more(ranges.sig_range, fits, c)
 
         # Calculate yield
-        calculate_yield(fits, ranges.sig_range)
+        yields = calculate_yield(fits, ranges.sig_range)
 
         c.Write(hname)
         c.SaveAs(f"{outfile}_{hname}.png")
