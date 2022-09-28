@@ -87,7 +87,7 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
 
     fitSigBkg = TF1("fitSigBkg", gausn_gausn_single_scale_expo,
                     full_range[0], full_range[1], 7)
-    fitSigBkg.FixParameter(0, mc_yields["ratio"])
+    fitSigBkg.FixParameter(0, mc_sig_params["scale"] / mc_bkg_params["scale"])
     fitSigBkg.SetParameter(1, estMean1)
     fitSigBkg.SetParameter(2, estSigma1)
     fitSigBkg.SetParameter(3, estMean2)
