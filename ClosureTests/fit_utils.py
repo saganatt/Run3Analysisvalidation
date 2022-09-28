@@ -44,6 +44,13 @@ def gausn_gausn_single_scale_expo(x, params):
             (params[4] * TMath.Sqrt(TMath.TwoPi()))) +\
             TMath.Exp(params[5] + params[6] * x[0])
 
+def gausn_gausn_more_scales_expo(x, params):
+    return params[0] * (params[1] * TMath.Exp(-0.5 * ((x[0] - params[2]) / params[3])**2) /\
+            (params[3] * TMath.Sqrt(TMath.TwoPi())) +\
+            params[4] * TMath.Exp(-0.5 * ((x[0] - params[5]) / params[6])**2) /\
+            (params[6] * TMath.Sqrt(TMath.TwoPi()))) +\
+            TMath.Exp(params[7] + params[8] * x[0])
+
 def background(x, params):
     if x[0] >= ranges.sig_range[0] and x[0] <= ranges.sig_range[1]:
         TF1.RejectPoint()
@@ -78,32 +85,29 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
         estMean1 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
         estMean2 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
 
-    fitSigBkg = TF1("fitSigBkg", gausn_gausn_expo,
-                    full_range[0], full_range[1], 8)
-    fitSigBkg.FixParameter(0, mc_yields["signal"])
+    fitSigBkg = TF1("fitSigBkg", gausn_gausn_single_scale_expo,
+                    full_range[0], full_range[1], 7)
+    fitSigBkg.FixParameter(0, mc_yields["ratio"])
     fitSigBkg.SetParameter(1, estMean1)
     fitSigBkg.SetParameter(2, estSigma1)
-    fitSigBkg.FixParameter(3, mc_yields["bkg"])
-    fitSigBkg.SetParameter(4, estMean2)
-    fitSigBkg.FixParameter(5, estSigma2)
-    fitSigBkg.SetParameter(6, params["offsetBkg"])
-    fitSigBkg.SetParameter(7, params["scaleBkg"])
+    fitSigBkg.SetParameter(3, estMean2)
+    fitSigBkg.FixParameter(4, estSigma2)
+    fitSigBkg.SetParameter(5, params["offsetBkg"])
+    fitSigBkg.SetParameter(6, params["scaleBkg"])
     # Default: chi-square method, L: log likelihood method, when histogram represents counts
     hist.Fit(fitSigBkg, "NQ+", "", full_range[0], full_range[1])
     params["scaleSigBkg1"] = fitSigBkg.GetParameter(0)
     params["meanSigBkg1"] = fitSigBkg.GetParameter(1)
     params["sigmaSigBkg1"] = fitSigBkg.GetParameter(2)
-    params["scaleSigBkg2"] = fitSigBkg.GetParameter(3)
-    params["meanSigBkg2"] = fitSigBkg.GetParameter(4)
-    params["sigmaSigBkg2"] = fitSigBkg.GetParameter(5)
-    params["offsetSigBkg"] = fitSigBkg.GetParameter(6)
-    params["expScaleSigBkg"] = fitSigBkg.GetParameter(7)
+    params["meanSigBkg2"] = fitSigBkg.GetParameter(3)
+    params["sigmaSigBkg2"] = fitSigBkg.GetParameter(4)
+    params["offsetSigBkg"] = fitSigBkg.GetParameter(5)
+    params["expScaleSigBkg"] = fitSigBkg.GetParameter(6)
     print(f'Joint fit parameters: '
           f'scale: {params["scaleSigBkg1"]:.3f} '
           f'mean: {params["meanSigBkg1"]:.3f} '
           f'sigma: {params["sigmaSigBkg1"]:.3f}'
-          f'\nscale: {params["scaleSigBkg2"]:.3f} '
-          f'mean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}'
+          f'\nmean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}'
           f'\noffset: {params["offsetSigBkg"]:.3f} exp scale: {params["expScaleSigBkg"]:.3f}'
           f'\nrange: {full_range[0]:.2f} {full_range[1]:.2f}')
 

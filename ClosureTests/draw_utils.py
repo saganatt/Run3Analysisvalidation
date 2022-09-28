@@ -7,7 +7,7 @@ Drawing utils for the invariant mass script
 from ROOT import TF1, TLine, TCanvas, TGraph # pylint: disable=import-error
 from ROOT import kFullCircle, kDashed, kBlack, kGreen, kBlue, kRed, kGray, kMagenta # pylint: disable=import-error
 
-from fit_utils import gausn_gausn_expo, gausn_expo, gauss_root, gausn_root, expo
+from fit_utils import gausn_gausn_expo, gausn_gausn_single_scale_expo, gausn_expo, gauss_root, gausn_root, expo
 
 def draw_inv_mass(hist, pt_range, hist_range):
     #hist.GetXaxis().SetRangeUser(pt_d0_to_pik[0], pt_d0_to_pik[1])
@@ -31,9 +31,9 @@ def get_vertical_line(x, c):
 def draw_fits(params, hist_range, sig_range):
     fits = {}
 
-    fSigBkg = TF1("fSigBkg", gausn_gausn_expo, hist_range[0], hist_range[1], 8)
+    fSigBkg = TF1("fSigBkg", gausn_gausn_single_scale_expo, hist_range[0], hist_range[1], 7)
     fSigBkg.SetParameters(params["scaleSigBkg1"], params["meanSigBkg1"], params["sigmaSigBkg1"],
-                          params["scaleSigBkg2"], params["meanSigBkg2"], params["sigmaSigBkg2"],
+                          params["meanSigBkg2"], params["sigmaSigBkg2"],
                           params["offsetSigBkg"], params["expScaleSigBkg"])
     fSigBkg.SetLineColor(kBlue)
     fSigBkg.Draw("same")
@@ -56,7 +56,7 @@ def draw_fits(params, hist_range, sig_range):
     refl_bkg_range = [params["meanSigBkg2"] - 3 * params["sigmaSigBkg2"],
                       params["meanSigBkg2"] + 3 * params["sigmaSigBkg2"]]
     fReflBkg = TF1("fReflBkg", gausn_root, refl_bkg_range[0], refl_bkg_range[1], 3)
-    fReflBkg.SetParameters(params["scaleSigBkg2"], params["meanSigBkg2"], params["sigmaSigBkg2"])
+    fReflBkg.SetParameters(params["scaleSigBkg1"], params["meanSigBkg2"], params["sigmaSigBkg2"])
     fReflBkg.SetLineColor(kMagenta)
     fReflBkg.Draw("same")
     fits["fReflBkg"] = fReflBkg
