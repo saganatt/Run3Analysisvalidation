@@ -37,13 +37,20 @@ def gausn_gausn_expo(x, params):
             (params[5] * TMath.Sqrt(TMath.TwoPi())) +\
             TMath.Exp(params[6] + params[7] * x[0])
 
+def gausn_gausn_single_scale_expo(x, params):
+    return params[0] * (TMath.Exp(-0.5 * ((x[0] - params[1]) / params[2])**2) /\
+            (params[2] * TMath.Sqrt(TMath.TwoPi())) +\
+            TMath.Exp(-0.5 * ((x[0] - params[3]) / params[4])**2) /\
+            (params[4] * TMath.Sqrt(TMath.TwoPi()))) +\
+            TMath.Exp(params[5] + params[6] * x[0])
+
 def background(x, params):
     if x[0] >= ranges.sig_range[0] and x[0] <= ranges.sig_range[1]:
         TF1.RejectPoint()
         return 0
     return TMath.Exp(params[0] + params[1] * x[0])
 
-def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params):
+def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params, mc_yields):
     params = {}
 
     for i in range(hist.GetNbinsX()):
@@ -73,12 +80,12 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params)
 
     fitSigBkg = TF1("fitSigBkg", gausn_gausn_expo,
                     full_range[0], full_range[1], 8)
-    fitSigBkg.SetParameter(0, 100)
+    fitSigBkg.FixParameter(0, mc_yields["signal"])
     fitSigBkg.SetParameter(1, estMean1)
     fitSigBkg.SetParameter(2, estSigma1)
-    fitSigBkg.SetParameter(3, 200)
+    fitSigBkg.FixParameter(3, mc_yields["bkg"])
     fitSigBkg.SetParameter(4, estMean2)
-    fitSigBkg.SetParameter(5, estSigma2)
+    fitSigBkg.FixParameter(5, estSigma2)
     fitSigBkg.SetParameter(6, params["offsetBkg"])
     fitSigBkg.SetParameter(7, params["scaleBkg"])
     # Default: chi-square method, L: log likelihood method, when histogram represents counts
@@ -108,8 +115,8 @@ def fit_mc(hMassProjMC, init_range, fin_range, init_scale):
 
     estMean = init_range[0] + (init_range[1] - init_range[0]) / 2
     fitSig = TF1("fitSig", gausn_root, init_range[0], init_range[1], 4)
-    fitSig.SetParameters(init_scale, estMean, estSigma)
-    #fitSig.SetParameter(1, estMean) # these 2 lines do not affect the results for pT [6, 8)
+    fitSig.SetParameters(init_scale, estMean, estSigma) # setting scale does not affect the results for pT [6, 8)
+    #fitSig.SetParameter(1, estMean)
     #fitSig.SetParameter(2, estSigma)
     hMassProjMC.Fit(fitSig, "NQ", "", init_range[0], init_range[1])
     params["scale"] = fitSig.GetParameter(0)
