@@ -2,7 +2,7 @@
 Fitting utils for the invariant mass script
 """
 
-# pylint: disable=missing-function-docstring, invalid-name
+# pylint: disable=missing-function-docstring, invalid-name, too-many-locals, too-many-arguments
 
 from ROOT import TF1, TMath # pylint: disable=import-error
 import ranges
@@ -51,6 +51,33 @@ def gausn_gausn_more_scales_expo(x, params):
             (params[6] * TMath.Sqrt(TMath.TwoPi()))) +\
             TMath.Exp(params[7] + params[8] * x[0])
 
+def gausn_gausn_aliphysics(x, params):
+    # Gauss = (c / (sigma * sqrt(2pi))) exp (-(x-mean)^2 / (2sigma^2))
+    # params: [0] integral signal, [1] mean, [2] sigma1, [3] 2nd Gaussian ratio, [4] ratio sigma12
+    g1 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[2]) *\
+            TMath.Exp(-(x[0] - params[1])**2 / (2. * params[2]**2))
+    g2 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * (params[4] * params[2])) *\
+            TMath.Exp(-(x[0] - params[1])**2 / (2. * (params[4] * params[2])**2))
+    return params[0] * ((1. - params[3]) * g1 + params[3] * g2)
+
+def gausn_gausn_rewritten(x, params):
+    # params: [0] scale [1] mean1 [2] sigma1 [3] mean2 [4] sigma2 [5] ratio of integrals
+    g1 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[2]) *\
+            TMath.Exp(-(x[0] - params[1])**2 / (2. * params[2]**2))
+    g2 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[4]) *\
+            TMath.Exp(-(x[0] - params[3])**2 / (2. * params[4]**2))
+    return params[0] * ((1. - params[5]) * g1 + params[5] * g2)
+
+def gausn_gausn_expo_rewritten(x, params):
+    # params: [0] scale [1] mean1 [2] sigma1 [3] mean2 [4] sigma2 [5] ratio of integrals
+    # [6], [7] exponential parameters
+    g1 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[2]) *\
+            TMath.Exp(-(x[0] - params[1])**2 / (2. * params[2]**2))
+    g2 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[4]) *\
+            TMath.Exp(-(x[0] - params[3])**2 / (2. * params[4]**2))
+    return params[0] * ((1. - params[5]) * g1 + params[5] * g2) +\
+            TMath.Exp(params[6] + params[7] * x[0])
+
 def background(x, params):
     if x[0] >= ranges.sig_range[0] and x[0] <= ranges.sig_range[1]:
         TF1.RejectPoint()
@@ -61,7 +88,8 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
     params = {}
 
     for i in range(hist.GetNbinsX()):
-        if hist.GetBinCenter(i) > ranges.pt_range_an[0] and hist.GetBinCenter(i) < ranges.pt_range_an[1]:
+        if hist.GetBinCenter(i) > ranges.pt_range_an[0] and\
+                hist.GetBinCenter(i) < ranges.pt_range_an[1]:
             unc = hist.GetBinError(i)
             pt = hist.GetBinCenter(i)
             print(f"Uncertainty for bin {i}, pt {pt:.3f}: {unc:.3f}")
@@ -85,15 +113,16 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
         estMean1 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
         estMean2 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
 
-    fitSigBkg = TF1("fitSigBkg", gausn_gausn_single_scale_expo,
-                    full_range[0], full_range[1], 7)
-    fitSigBkg.FixParameter(0, mc_sig_params["scale"] / mc_bkg_params["scale"])
+    fitSigBkg = TF1("fitSigBkg", gausn_gausn_expo_rewritten,
+                    full_range[0], full_range[1], 8)
+    #fitSigBkg.FixParameter(0, mc_yields["ratio"])
     fitSigBkg.SetParameter(1, estMean1)
     fitSigBkg.SetParameter(2, estSigma1)
     fitSigBkg.SetParameter(3, estMean2)
     fitSigBkg.FixParameter(4, estSigma2)
-    fitSigBkg.SetParameter(5, params["offsetBkg"])
-    fitSigBkg.SetParameter(6, params["scaleBkg"])
+    fitSigBkg.FixParameter(5, mc_yields["ratio"])
+    fitSigBkg.SetParameter(6, params["offsetBkg"])
+    fitSigBkg.SetParameter(7, params["scaleBkg"])
     # Default: chi-square method, L: log likelihood method, when histogram represents counts
     hist.Fit(fitSigBkg, "NQ+", "", full_range[0], full_range[1])
     params["scaleSigBkg1"] = fitSigBkg.GetParameter(0)
@@ -101,13 +130,15 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
     params["sigmaSigBkg1"] = fitSigBkg.GetParameter(2)
     params["meanSigBkg2"] = fitSigBkg.GetParameter(3)
     params["sigmaSigBkg2"] = fitSigBkg.GetParameter(4)
-    params["offsetSigBkg"] = fitSigBkg.GetParameter(5)
-    params["expScaleSigBkg"] = fitSigBkg.GetParameter(6)
+    params["intRatioSigBkg"] = fitSigBkg.GetParameter(5)
+    params["offsetSigBkg"] = fitSigBkg.GetParameter(6)
+    params["expScaleSigBkg"] = fitSigBkg.GetParameter(7)
     print(f'Joint fit parameters: '
           f'scale: {params["scaleSigBkg1"]:.3f} '
           f'mean: {params["meanSigBkg1"]:.3f} '
           f'sigma: {params["sigmaSigBkg1"]:.3f}'
           f'\nmean: {params["meanSigBkg2"]:.3f} sigma: {params["sigmaSigBkg2"]:.3f}'
+          f'\nint ratio: {params["intRatioSigBkg"]:.3f}'
           f'\noffset: {params["offsetSigBkg"]:.3f} exp scale: {params["expScaleSigBkg"]:.3f}'
           f'\nrange: {full_range[0]:.2f} {full_range[1]:.2f}')
 
@@ -119,7 +150,8 @@ def fit_mc(hMassProjMC, init_range, fin_range, init_scale):
 
     estMean = init_range[0] + (init_range[1] - init_range[0]) / 2
     fitSig = TF1("fitSig", gausn_root, init_range[0], init_range[1], 4)
-    fitSig.SetParameters(init_scale, estMean, estSigma) # setting scale does not affect the results for pT [6, 8)
+    # setting scale does not affect the results for pT [6, 8)
+    fitSig.SetParameters(init_scale, estMean, estSigma)
     #fitSig.SetParameter(1, estMean)
     #fitSig.SetParameter(2, estSigma)
     hMassProjMC.Fit(fitSig, "NQ", "", init_range[0], init_range[1])

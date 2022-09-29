@@ -28,7 +28,10 @@ def calculate_yield(fits, int_range):
     yields["all"] = fits["fSigBkg"].Integral(int_range[0], int_range[1])
     yields["signal"] = fits["fSig"].Integral(int_range[0], int_range[1])
     yields["refl bkg"] = fits["fReflBkg"].Integral(int_range[0], int_range[1])
-    yields["ratio"] = yields["signal"] / yields["refl bkg"]
+    if yields["refl bkg"] == 0.:
+        yields["ratio"] = 0.
+    else:
+        yields["ratio"] = yields["signal"] / yields["refl bkg"]
     yields["bkg"] = fits["fBkg"].Integral(int_range[0], int_range[1])
     print(f'Full integral: {yields["all"]:.3f} '
           f'yield=signal: {yields["signal"]:.3f} '
@@ -116,8 +119,8 @@ def main(file, mcfile, outfile, task, drawMore, doMC):
 
         if doMC:
             mc_sig_params, mc_bkg_params, mc_yields = process_mc(hMassSigD0, hMassReflBkgD0,
-                                                                      outfile,
-                                                                      binmin, binmax)
+                                                                 outfile,
+                                                                 binmin, binmax)
         else:
             mc_sig_params = {}
             mc_bkg_params = {}
