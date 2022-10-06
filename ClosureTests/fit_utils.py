@@ -61,7 +61,7 @@ def gausn_gausn_aliphysics(x, params):
     return params[0] * ((1. - params[3]) * g1 + params[3] * g2)
 
 def gausn_gausn_rewritten(x, params):
-    # params: [0] scale [1] mean1 [2] sigma1 [3] mean2 [4] sigma2 [5] ratio of integrals
+    # params: [0] scale [1] mean1 [2] sigma1 [3] mean2 [4] sigma2 [5] Gaussian ratio
     g1 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[2]) *\
             TMath.Exp(-(x[0] - params[1])**2 / (2. * params[2]**2))
     g2 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[4]) *\
@@ -69,7 +69,7 @@ def gausn_gausn_rewritten(x, params):
     return params[0] * ((1. - params[5]) * g1 + params[5] * g2)
 
 def gausn_gausn_expo_rewritten(x, params):
-    # params: [0] scale [1] mean1 [2] sigma1 [3] mean2 [4] sigma2 [5] ratio of integrals
+    # params: [0] scale [1] mean1 [2] sigma1 [3] mean2 [4] sigma2 [5] Gaussian ratio
     # [6], [7] exponential parameters
     g1 = 1. / (TMath.Sqrt(2. * TMath.Pi()) * params[2]) *\
             TMath.Exp(-(x[0] - params[1])**2 / (2. * params[2]**2))
@@ -113,6 +113,10 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
         estMean1 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
         estMean2 = sig_range[0] + (sig_range[1] - sig_range[0]) / 2.
 
+    gaussRatio = (mc_yields["bkg"] * mc_bkg_params["sigma"]) /\
+                 (mc_yields["signal"] * mc_sig_params["sigma"] +\
+                    mc_yields["bkg"] * mc_bkg_params["sigma"])
+
     fitSigBkg = TF1("fitSigBkg", gausn_gausn_expo_rewritten,
                     full_range[0], full_range[1], 8)
     #fitSigBkg.FixParameter(0, mc_yields["ratio"])
@@ -120,7 +124,7 @@ def fit_sig_bkg(hist, sig_range, full_range, doMC, mc_sig_params, mc_bkg_params,
     fitSigBkg.SetParameter(2, estSigma1)
     fitSigBkg.SetParameter(3, estMean2)
     fitSigBkg.FixParameter(4, estSigma2)
-    fitSigBkg.FixParameter(5, mc_yields["ratio"])
+    fitSigBkg.FixParameter(5, gaussRatio)
     fitSigBkg.SetParameter(6, params["offsetBkg"])
     fitSigBkg.SetParameter(7, params["scaleBkg"])
     # Default: chi-square method, L: log likelihood method, when histogram represents counts
