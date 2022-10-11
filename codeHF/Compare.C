@@ -67,6 +67,10 @@ Int_t Compare(TString filerun3 = "AnalysisResults_O2.root", TString filerun2 = "
   AddHistogram(vecHisSkim, "secondary vtx y - 3prong (cm)", "h3ProngVertY", "hf-track-index-skim-creator/hVtx3ProngY", 5, 1, 0);
   AddHistogram(vecHisSkim, "secondary vtx z - 3prong (cm)", "h3ProngVertZ", "hf-track-index-skim-creator/hVtx3ProngZ", 5, 1, 0);
 
+  AddHistogram(vecHisSkim, "primary vtx x (cm)", "hPrimVertX", "hf-track-index-skims-creator/hCollPosX", 1, 1, 0);
+  AddHistogram(vecHisSkim, "primary vtx y (cm)", "hPrimVertY", "hf-track-index-skims-creator/hCollPosY", 1, 1, 0);
+  AddHistogram(vecHisSkim, "primary vtx z (cm)", "hPrimVertZ", "hf-track-index-skims-creator/hCollPosZ", 1, 1, 0);
+
   VecSpecHis vecHisCand2;
   AddHistogram(vecHisCand2, "XX element of PV cov. matrix (cm^{2})", "hCovMatPrimVXX2Prong", "hf-candidate-creator-2prong/hCovPVXX", 1, 1, 0);
   AddHistogram(vecHisCand2, "XX element of SV cov. matrix (cm^{2})", "hCovMatSecVXX2Prong", "hf-candidate-creator-2prong/hCovSVXX", 1, 1, 0);
