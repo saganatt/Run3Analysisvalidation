@@ -46,7 +46,7 @@ Long64_t RunHFTaskLocal(TString txtfile = "./list_ali.txt",
   if (useO2Vertexer) {
     tasktr3->SetUseO2Vertexer();
   }
-  tasktr3->SetUseCandidateAnalysisCuts();
+  //tasktr3->SetUseCandidateAnalysisCuts();
 
   mgr->InitAnalysis();
   mgr->PrintStatus();
