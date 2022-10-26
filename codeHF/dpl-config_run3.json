@@ -64,7 +64,7 @@
         "doPvRefit": "false",
         "doCutQuality": "true",
         "useIsGlobalTrack": "false",
-        "tpcNClsFoundMin": "71",
+        "tpcNClsFoundMin": "51",
         "binsPtTrack": {
             "values": [
                 "0.",
@@ -76,7 +76,7 @@
                 "100."
             ]
         },
-        "ptMinTrack2Prong": "0.4",
+        "ptMinTrack2Prong": "0.2",
         "cutsTrack2Prong": {
             "values": [
                 ["0.03", "1.0"],
@@ -87,7 +87,7 @@
                 ["0.00", "10."]
             ]
         },
-        "etaMaxTrack2Prong": "0.8",
+        "etaMaxTrack2Prong": "1.0",
         "ptMinTrack3Prong": "0.4",
         "cutsTrack3Prong": {
             "values": [
