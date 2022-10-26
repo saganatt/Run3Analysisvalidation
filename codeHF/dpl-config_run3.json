@@ -64,7 +64,7 @@
         "doPvRefit": "false",
         "doCutQuality": "true",
         "useIsGlobalTrack": "false",
-        "tpcNClsFoundMin": "20",
+        "tpcNClsFoundMin": "71",
         "binsPtTrack": {
             "values": [
                 "0.",
@@ -76,18 +76,18 @@
                 "100."
             ]
         },
-        "ptMinTrack2Prong": "-1",
+        "ptMinTrack2Prong": "0.4",
         "cutsTrack2Prong": {
             "values": [
-                ["0.0025", "10.0"],
-                ["0.0025", "10.0"],
-                ["0.0025", "10.0"],
-                ["0.0025", "10.0"],
-                ["0.00", "20."],
-                ["0.00", "20."]
+                ["0.03", "1.0"],
+                ["0.03", "1.0"],
+                ["0.03", "1.0"],
+                ["0.03", "1.0"],
+                ["0.00", "10."],
+                ["0.00", "10."]
             ]
         },
-        "etaMaxTrack2Prong": "4.0",
+        "etaMaxTrack2Prong": "0.8",
         "ptMinTrack3Prong": "0.4",
         "cutsTrack3Prong": {
             "values": [
