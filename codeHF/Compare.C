@@ -59,6 +59,17 @@ Int_t Compare(TString filerun3 = "AnalysisResults_O2.root", TString filerun2 = "
   AddHistogram(vecHisTracks, "#it{#eta} (3-prong sel.)", "hEtaSelTracks3prong", "hf-track-index-skim-creator-tag-sel-tracks/hEtaCuts3Prong", 2, 0, 0);
   AddHistogram(vecHisTracks, "#it{#eta} (bachelor sel.)", "hEtaSelTracksbachelor", "hf-track-index-skim-creator-tag-sel-tracks/hEtaCutsV0bachelor", 2, 0, 0);
 
+  VecSpecHis vecHisTracks2Vtx;
+  AddHistogram(vecHisTracks2Vtx, "#it{p}_{T} (2-prong sel.)", "hPtTracks2ProngAll", "hf-track-index-skims-creator/hPt2ProngAll", 2, 1, 0);
+  AddHistogram(vecHisTracks2Vtx, "#it{p}_{T} (2-prong sel. pos.)", "hPtTracks2ProngPos", "hf-track-index-skims-creator/hPt2ProngPos", 2, 1, 0);
+  AddHistogram(vecHisTracks2Vtx, "#it{p}_{T} (2-prong sel. neg.)", "hPtTracks2ProngNeg", "hf-track-index-skims-creator/hPt2ProngNeg", 2, 1, 0);
+  AddHistogram(vecHisTracks2Vtx, "#it{#eta} (2-prong sel.)", "hEtaTracks2ProngAll", "hf-track-index-skims-creator/hEta2ProngAll", 2, 0, 0);
+  AddHistogram(vecHisTracks2Vtx, "#it{#eta} (2-prong sel. pos.)", "hEtaTracks2ProngPos", "hf-track-index-skims-creator/hEta2ProngPos", 2, 0, 0);
+  AddHistogram(vecHisTracks2Vtx, "#it{#eta} (2-prong sel. neg.)", "hEtaTracks2ProngNeg", "hf-track-index-skims-creator/hEta2ProngNeg", 2, 0, 0);
+  AddHistogram(vecHisTracks2Vtx, "DCA XY to prim. vtx. (2-prong sel.) (cm)", "hImpParTracks2ProngAll", "hf-track-index-skims-creator/hDCAToPrimXYVsPt2ProngAll", 2, 1, 0, "y");
+  AddHistogram(vecHisTracks2Vtx, "DCA XY to prim. vtx. (2-prong sel. pos.) (cm)", "hImpParTracks2ProngPos", "hf-track-index-skims-creator/hDCAToPrimXYVsPt2ProngPos", 2, 1, 0, "y");
+  AddHistogram(vecHisTracks2Vtx, "DCA XY to prim. vtx. (2-prong sel. neg.) (cm)", "hImpParTracks2ProngNeg", "hf-track-index-skims-creator/hDCAToPrimXYVsPt2ProngNeg", 2, 1, 0, "y");
+
   VecSpecHis vecHisSkim;
   AddHistogram(vecHisSkim, "secondary vtx x - 2prong (cm)", "h2ProngVertX", "hf-track-index-skim-creator/hVtx2ProngX", 5, 1, 0);
   AddHistogram(vecHisSkim, "secondary vtx y - 2prong (cm)", "h2ProngVertY", "hf-track-index-skim-creator/hVtx2ProngY", 5, 1, 0);
@@ -219,6 +230,8 @@ Int_t Compare(TString filerun3 = "AnalysisResults_O2.root", TString filerun2 = "
     vecSpecVecSpec.push_back(std::make_tuple("events", vecHisEvents, 4, 2));
   if (options.Contains(" tracks "))
     vecSpecVecSpec.push_back(std::make_tuple("tracks", vecHisTracks, 5, 3));
+  if (options.Contains(" tracks "))
+    vecSpecVecSpec.push_back(std::make_tuple("tracks2Vtx", vecHisTracks2Vtx, 3, 3));
   if (options.Contains(" skim "))
     vecSpecVecSpec.push_back(std::make_tuple("skim", vecHisSkim, 5, 3));
   if (options.Contains(" cand2 "))
