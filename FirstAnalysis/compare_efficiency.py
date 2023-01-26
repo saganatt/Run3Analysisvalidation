@@ -3,9 +3,9 @@
 file: compare_efficiency.py
 brief: Plotting macro to compare O2 and AliPhysics efficiencies.
 author: Maja Kabus <mkabus@cern.ch>, CERN / Warsaw University of Technology
-usage: ./compare_efficiency.py <O2 *.root file> <AliPhysics *.root file> <variable> <hadron>
-       ./compare_efficiency.py efficiency_tracking_ITS-TPC_Positive_Pt.root
-                               STE_RecPPRoverGenAcc_species_pt.root Pt All
+usage: ./compare_efficiency.py <O2 *.root file pattern> <AliPhysics *.root file>
+       ./compare_efficiency.py efficiency_tracking_ITS-TPC
+                               STE_RecPPRoverGenAcc_species
 
 For O2, efficiency_tracking_*.root files are produced by efficiency_studies macro and contain
 a canvas with all particles respective efficiencies.
@@ -122,7 +122,7 @@ def retrieve_points(canvas, iso2):
     return eff, leg_labels
 
 
-def compare_efficiency(canvali, canvo2, var): # pylint: disable=too-many-locals, too-many-statements
+def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-locals, too-many-statements
     """
     Compare O2 vs AliPhysics efficiency vs pT, eta, phi for all hadron species.
     """
@@ -141,11 +141,11 @@ def compare_efficiency(canvali, canvo2, var): # pylint: disable=too-many-locals,
     gStyle.SetTitleOffset(1.0, "y")
     gStyle.SetErrorX(0)
 
-    results = prepare_canvas(var, get_titles(var, "Positive", "all", "ITS-TPC", "Efficiency"),
+    results = prepare_canvas(var, get_titles(var, sign, "all", "ITS-TPC", "Efficiency"),
                              False)
     c_all = results[0]
     leg_all = results[1]
-    #results_all_ratio = prepare_canvas(var, get_titles(var, "Positive", "all_ratio",
+    #results_all_ratio = prepare_canvas(var, get_titles(var, sign, "all_ratio",
     #                                   "ITS-TPC", "Efficiency ratio"), False)
     #c_all_ratio = results_all_ratio[0]
     #leg_all_ratio = results_all_ratio[1]
@@ -185,7 +185,7 @@ def compare_efficiency(canvali, canvo2, var): # pylint: disable=too-many-locals,
                   #f"max: {hratio.GetYaxis().GetXmax()}")
             #leg_all_ratio.AddEntry(hratio, ali_lab, "p")
 
-        results_single = prepare_canvas(var, get_titles(var, "Positive", o2_lab,
+        results_single = prepare_canvas(var, get_titles(var, sign, o2_lab,
                                                         "ITS-TPC", "Efficiency"), True)
         c_single = results_single[0]
         leg_single = results_single[1]
@@ -197,15 +197,15 @@ def compare_efficiency(canvali, canvo2, var): # pylint: disable=too-many-locals,
         leg_single.AddEntry(o2_elem, "Run 3", "p")
 
         leg_single.Draw()
-        save_canvas(c_single, f"comparison_efficiency_ITS-TPC_Positive_{var}_{o2_lab}")
+        save_canvas(c_single, f"comparison_efficiency_ITS-TPC_{sign}_{var}_{o2_lab}")
 
     c_all.cd()
     leg_all.Draw()
-    save_canvas(c_all, f"comparison_efficiency_ITS-TPC_Positive_{var}")
+    save_canvas(c_all, f"comparison_efficiency_ITS-TPC_{sign}_{var}")
 
     #c_all_ratio.cd()
     #leg_all_ratio.Draw()
-    #save_canvas(c_all_ratio, f"comparison_efficiency_ratio_ITS-TPC_Positive_{var}")
+    #save_canvas(c_all_ratio, f"comparison_efficiency_ratio_ITS-TPC_{sign}_{var}")
 
 
 def main():
@@ -215,18 +215,17 @@ def main():
     gROOT.SetBatch(True)
 
     parser = argparse.ArgumentParser(description="Arguments to pass")
-    parser.add_argument("o2_input_file", help="input O2 efficiency plot ROOT file")
-    parser.add_argument("ali_input_file", help="input AliPhysics efficiency plot ROOT file")
-    parser.add_argument("var", default="Pt",
-                        help="Capitalized name of efficiency variable (Pt/Eta)")
+    parser.add_argument("o2_input_file", help="input O2 efficiency plot ROOT file pattern")
+    parser.add_argument("ali_input_file", help="input AliPhysics efficiency plot ROOT file pattern")
     args = parser.parse_args()
 
-    o2file = TFile(args.o2_input_file)
-    canvo2 = o2file.Get(f"c_all_ITS-TPC_Positive_{args.var}")
-    alifile = TFile(args.ali_input_file)
-    canvali = alifile.Get("c1")
-
-    compare_efficiency(canvali, canvo2, args.var)
+    for var in ("Pt", "Eta"):
+        alifile = TFile(f"{args.ali_input_file}_{var.lower()}.root")
+        canvali = alifile.Get("c1")
+        for sign in ("Positive", "Negative"):
+            o2file = TFile(f"{args.o2_input_file}_{sign}_{var}.root")
+            canvo2 = o2file.Get(f"c_all_ITS-TPC_{sign}_{var}")
+            compare_efficiency(canvali, canvo2, var, sign)
 
 if __name__ == "__main__":
     main()
