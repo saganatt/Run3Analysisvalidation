@@ -18,7 +18,7 @@ import argparse
 from ROOT import TH1F, TCanvas, TLegend, TLatex # pylint: disable=import-error,no-name-in-module
 #from ROOT import gPad, gStyle, gROOT # pylint: disable=import-error,no-name-in-module
 from ROOT import TFile, gStyle, gROOT
-from ROOT import kGreen, kOrange # pylint: disable=import-error,no-name-in-module
+from ROOT import kGreen, kOrange, kWhite # pylint: disable=import-error,no-name-in-module
 
 
 def save_canvas(canvas, title):
@@ -86,6 +86,10 @@ def prepare_canvas(var, titles, single):
     leg.SetNColumns(2)
     leg.SetHeader("Minimum bias pp #sqrt{s} = 5.02TeV", "C")
     leg.SetFillColor(0)
+    if not single:
+        hempty.SetMarkerColor(kWhite)
+        leg.AddEntry(hempty, "Run 2", "p")
+        leg.AddEntry(hempty, "Run 3", "p")
 
     return canv, leg, hempty
 
@@ -222,9 +226,9 @@ def main():
     for var in ("Pt", "Eta"):
         alifile = TFile(f"{args.ali_input_file}_{var.lower()}.root")
         canvali = alifile.Get("c1")
-        for sign in ("Positive", "Negative"):
+        for sign in ("Positive", "Negative", "All"):
             o2file = TFile(f"{args.o2_input_file}_{sign}_{var}.root")
-            canvo2 = o2file.Get(f"c_all_ITS-TPC_{sign}_{var}")
+            canvo2 = o2file.Get(f"c_{sign}_all_ITS-TPC_{var}")
             compare_efficiency(canvali, canvo2, var, sign)
 
 if __name__ == "__main__":
