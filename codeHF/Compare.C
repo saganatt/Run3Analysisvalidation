@@ -207,6 +207,9 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisJpsi, "decay length error (cm)", "hDecLenErrJpsi", "hf-task-jpsi/hDecLenErr", 1, 1, 0);
   AddHistogram(vecHisJpsi, "decay length XY error (cm)", "hDecLenXYErrJpsi", "hf-task-jpsi/hDecLenXYErr", 1, 1, 0);
 
+  VecSpecHis vecHisQAEff;
+  AddHistogram(vecHisQAEff, "Number of processed events", "hNEvents", "task-qa-efficiency/", 2, 1, 0);
+
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
 
@@ -243,6 +246,8 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
     vecSpecVecSpec.push_back(std::make_tuple("lc-mc-nonprompt", vecHisLcMCNonPrompt, 5, 3));
   if (options.Contains(" jpsi "))
     vecSpecVecSpec.push_back(std::make_tuple("jpsi", vecHisJpsi, 5, 3));
+  if (options.Contains(" qaeff "))
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff", vecHisQAEff, 5, 3));
 
   // Histogram plot vertical margins
   Float_t marginHigh = 0.05;
