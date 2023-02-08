@@ -15,9 +15,9 @@ AliPhysics files were extracted separately from AliPhysics' correction framework
 
 import argparse
 
-from ROOT import TH1F, TCanvas, TLegend, TLatex # pylint: disable=import-error,no-name-in-module
-from ROOT import TFile, gStyle, gROOT
-from ROOT import kGreen, kOrange, kWhite # pylint: disable=import-error,no-name-in-module
+from ROOT import (TH1F,  # pylint: disable=import-error,no-name-in-module; pylint: disable=import-error,no-name-in-module
+                  TCanvas, TFile, TLatex, TLegend, gROOT, gStyle, kGreen,
+                  kOrange, kWhite)
 
 
 def save_canvas(canvas, title):
@@ -48,15 +48,25 @@ def prepare_canvas(var, titles, single):
     """
 
     hname, cname, ctitle, ytitle = titles
+
     def get_pt_hist():
-        hempty = TH1F(hname, f"{ctitle};Transverse Momentum (GeV/c);{ytitle}", 16, 0.00, 16)
-        #gPad.SetLogx()
+        hempty = TH1F(
+            hname, f"{ctitle};Transverse Momentum (GeV/c);{ytitle}", 16, 0.00, 16
+        )
+        # gPad.SetLogx()
         return hempty
+
     def get_eta_hist():
         return TH1F(hname, f"{ctitle};Pseudorapidity;{ytitle}", 16, -1.5, 1.5)
+
     def get_phi_hist():
-        return TH1F(hname, f"{ctitle};Azimuthal angle (rad);{ytitle}",
-                    16, -2 * 3.1416 - 0.5, 2 * 3.1416 + 0.5)
+        return TH1F(
+            hname,
+            f"{ctitle};Azimuthal angle (rad);{ytitle}",
+            16,
+            -2 * 3.1416 - 0.5,
+            2 * 3.1416 + 0.5,
+        )
 
     hists = {"Pt": get_pt_hist, "Eta": get_eta_hist, "Phi": get_phi_hist}
 
@@ -101,10 +111,13 @@ def retrieve_points(canvas, iso2):
     clp = canvas.GetListOfPrimitives()
     eff = []
     leg_labels = []
+
     def o2_cond(elem):
         return iso2 and elem.GetName() == "eff_graph"
+
     def ali_cond(elem):
         return not iso2 and type(elem).__name__ == "TH1D"
+
     for elem in clp:
         if o2_cond(elem) or ali_cond(elem):
             eff.append(elem)
@@ -120,18 +133,21 @@ def retrieve_points(canvas, iso2):
 
     typestr = "O2" if iso2 else "AliPhysics"
     if len(eff) != len(leg_labels):
-        raise RuntimeError(f"Different number of plots and legend entries in {typestr} file")
+        raise RuntimeError(
+            f"Different number of plots and legend entries in {typestr} file"
+        )
 
     return eff, leg_labels
 
 
-def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-locals, too-many-statements
+def compare_efficiency(
+    canvali, canvo2, var, sign
+):  # pylint: disable=too-many-locals, too-many-statements
     """
     Compare O2 vs AliPhysics efficiency vs pT, eta, phi for all hadron species.
     """
-    color_list = [1, 2, 4, kGreen + 2, kOrange - 3]
-    ali_marker_list = [47, 21, 22, 34, 20] # full figures
-    o2_marker_list = [46, 25, 26, 28, 24] # open figures
+    ali_marker_list = [47, 21, 22, 34, 20]  # full figures
+    o2_marker_list = [46, 25, 26, 28, 24]  # open figures
 
     gStyle.SetOptStat(0)
     gStyle.SetFrameLineWidth(2)
@@ -144,8 +160,9 @@ def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-l
     gStyle.SetTitleOffset(1.0, "y")
     gStyle.SetErrorX(0)
 
-    results = prepare_canvas(var, get_titles(var, sign, "all", "ITS-TPC", "Efficiency"),
-                             False)
+    results = prepare_canvas(
+        var, get_titles(var, sign, "all", "ITS-TPC", "Efficiency"), False
+    )
     c_all = results[0]
     leg_all = results[1]
 
@@ -155,8 +172,9 @@ def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-l
     if len(o2_eff) != len(ali_eff):
         raise RuntimeError("Different number of plots in AliPhysics and O2 files")
 
-    for ind, (ali_elem, ali_lab, o2_elem, o2_lab) in \
-            enumerate(zip(ali_eff, ali_leg_labels, o2_eff, o2_leg_labels)):
+    for ind, (ali_elem, ali_lab, o2_elem, o2_lab) in enumerate(
+        zip(ali_eff, ali_leg_labels, o2_eff, o2_leg_labels)
+    ):
         ali_elem.SetMarkerStyle(ali_marker_list[ind])
         o2_elem.SetMarkerStyle(o2_marker_list[ind])
 
@@ -166,8 +184,9 @@ def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-l
         o2_elem.Draw(" same p")
         leg_all.AddEntry(o2_elem, o2_lab, "p")
 
-        results_single = prepare_canvas(var, get_titles(var, sign, o2_lab,
-                                                        "ITS-TPC", "Efficiency"), True)
+        results_single = prepare_canvas(
+            var, get_titles(var, sign, o2_lab, "ITS-TPC", "Efficiency"), True
+        )
         c_single = results_single[0]
         leg_single = results_single[1]
 
@@ -192,8 +211,12 @@ def main():
     gROOT.SetBatch(True)
 
     parser = argparse.ArgumentParser(description="Arguments to pass")
-    parser.add_argument("o2_input_file", help="input O2 efficiency plot ROOT file pattern")
-    parser.add_argument("ali_input_file", help="input AliPhysics efficiency plot ROOT file pattern")
+    parser.add_argument(
+        "o2_input_file", help="input O2 efficiency plot ROOT file pattern"
+    )
+    parser.add_argument(
+        "ali_input_file", help="input AliPhysics efficiency plot ROOT file pattern"
+    )
     args = parser.parse_args()
 
     for var in ("Pt", "Eta"):
@@ -203,6 +226,7 @@ def main():
             o2file = TFile(f"{args.o2_input_file}_{sign}_{var}.root")
             canvo2 = o2file.Get(f"c_{sign}_all_ITS-TPC_{var}")
             compare_efficiency(canvali, canvo2, var, sign)
+
 
 if __name__ == "__main__":
     main()
