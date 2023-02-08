@@ -208,7 +208,10 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisJpsi, "decay length XY error (cm)", "hDecLenXYErrJpsi", "hf-task-jpsi/hDecLenXYErr", 1, 1, 0);
 
   VecSpecHis vecHisQAEff;
-  AddHistogram(vecHisQAEff, "Number of processed events", "hNEvents", "task-qa-efficiency/", 2, 1, 0);
+  AddHistogram(vecHisQAEff, "Number of processed events", "hNEvents", "qa-efficiency/eventSelection", 1, 1, 0);
+  AddHistogram(vecHisQAEff, "Number of processed particles", "hNParticles", "qa-efficiency/MC/particleSelection", 1, 1, 0);
+  AddHistogram(vecHisQAEff, "Number of processed tracks", "hNTracks", "qa-efficiency/MC/trackSelection", 1, 1, 0);
+  AddHistogram(vecHisQAEff, "Generated particles in selected events", "hGenEvSel_el_neg", "qa-efficiency/MC/el/neg/pt/generated", 1, 1, 0);
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
