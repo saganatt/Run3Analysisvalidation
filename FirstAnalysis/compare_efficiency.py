@@ -16,7 +16,6 @@ AliPhysics files were extracted separately from AliPhysics' correction framework
 import argparse
 
 from ROOT import TH1F, TCanvas, TLegend, TLatex # pylint: disable=import-error,no-name-in-module
-#from ROOT import gPad, gStyle, gROOT # pylint: disable=import-error,no-name-in-module
 from ROOT import TFile, gStyle, gROOT
 from ROOT import kGreen, kOrange, kWhite # pylint: disable=import-error,no-name-in-module
 
@@ -149,10 +148,6 @@ def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-l
                              False)
     c_all = results[0]
     leg_all = results[1]
-    #results_all_ratio = prepare_canvas(var, get_titles(var, sign, "all_ratio",
-    #                                   "ITS-TPC", "Efficiency ratio"), False)
-    #c_all_ratio = results_all_ratio[0]
-    #leg_all_ratio = results_all_ratio[1]
 
     o2_eff, o2_leg_labels = retrieve_points(canvo2, True)
     ali_eff, ali_leg_labels = retrieve_points(canvali, False)
@@ -171,24 +166,6 @@ def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-l
         o2_elem.Draw(" same p")
         leg_all.AddEntry(o2_elem, o2_lab, "p")
 
-        #if ind == 0:
-            #c_all_ratio.cd()
-            #max_val = ali_elem.GetXaxis().GetXmax()
-            #hratio = ali_elem.Clone(f"ratio {o2_lab}")
-            #for j in range(o2_elem.GetN() + 1):
-            #    x_o2 = o2_elem.GetPointX(j)
-            #    if x_o2 > max_val:
-            #        break
-            #    y_o2 = o2_elem.GetPointY(j)
-            #    y_ali = ali_elem.GetBinContent(j + 1)
-            #    hratio.SetBinContent(j + 1, y_o2 / y_ali)
-            #hratio_max = hratio.GetYaxis().GetXmax() + 0.1
-            #hratio.Draw(" same p")
-            #hratio.GetYaxis().SetRangeUser(0., 1.5)
-            #print(f"hratio y min: {hratio.GetYaxis().GetXmin()} "
-                  #f"max: {hratio.GetYaxis().GetXmax()}")
-            #leg_all_ratio.AddEntry(hratio, ali_lab, "p")
-
         results_single = prepare_canvas(var, get_titles(var, sign, o2_lab,
                                                         "ITS-TPC", "Efficiency"), True)
         c_single = results_single[0]
@@ -206,10 +183,6 @@ def compare_efficiency(canvali, canvo2, var, sign): # pylint: disable=too-many-l
     c_all.cd()
     leg_all.Draw()
     save_canvas(c_all, f"comparison_efficiency_ITS-TPC_{sign}_{var}")
-
-    #c_all_ratio.cd()
-    #leg_all_ratio.Draw()
-    #save_canvas(c_all_ratio, f"comparison_efficiency_ratio_ITS-TPC_{sign}_{var}")
 
 
 def main():
