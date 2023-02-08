@@ -8,19 +8,9 @@ author: Maja Kabus <mkabus@cern.ch>, CERN / Warsaw University of Technology
 
 import argparse
 
-from ROOT import (  # pylint: disable=import-error,no-name-in-module
-    TH1F,
-    TCanvas,
-    TEfficiency,
-    TFile,
-    TLatex,
-    TLegend,
-    gPad,
-    gROOT,
-    gStyle,
-    kGreen,
-    kOrange,
-)
+# pylint: disable=import-error,no-name-in-module
+from ROOT import (TH1F, TCanvas, TEfficiency, TFile, TLatex, TLegend, gPad,
+                  gROOT, gStyle, kGreen, kOrange)
 
 
 def save_canvas(canvas, title):
