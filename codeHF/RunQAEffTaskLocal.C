@@ -1,13 +1,13 @@
 TChain* CreateLocalChain(const char* txtfile);
 
-Long64_t AddTaskTrackingEffPID(TString txtfile = "./list_ali.txt",
-                               Bool_t isMC = kFALSE,
-                               TString suffix = "",
-                               TString collSyst="pp",
-                               bool useGeneratedKine=kTRUE,
-                               TString cutObjFile = "",
-                               TString cutObjNam = "",
-                               Int_t filtBit=4)
+Long64_t RunQAEffTaskLocal(TString txtfile = "./list_ali.txt",
+                           Bool_t isMC = kFALSE,
+                           TString suffix = "",
+                           TString collSyst="pp",
+                           bool useGeneratedKine=kTRUE,
+                           TString cutObjFile = "",
+                           TString cutObjNam = "",
+                           Int_t filtBit=4)
 {
   // Load common libraries
   gSystem->Load("libCore.so");
@@ -42,7 +42,7 @@ Long64_t AddTaskTrackingEffPID(TString txtfile = "./list_ali.txt",
   // Apply the event selection
   AliPhysicsSelectionTask* physSelTask = reinterpret_cast<AliPhysicsSelectionTask*>(gInterpreter->ProcessLine(Form(".x %s(%d)", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C"), isMC)));
 
-  AliAnalysisTaskTrackingEffPID* taskeff = reinterpret_cast<AliAnalysisTaskTrackingEffPID*>(gInterpreter->ProcessLine(Form(".x %s(%s,%s,%d,%s,%s,%d)", gSystem->ExpandPathName("$ALICE_PHYSICS/PWGPP/macros/AddTaskTrackingEffPID.C"), suffix, collSyst, useGeneratedKine, cutObjFile, cutObjNam, filtBit)));
+  AliAnalysisTaskTrackingEffPID* taskeff = reinterpret_cast<AliAnalysisTaskTrackingEffPID*>(gInterpreter->ProcessLine(Form(".x %s(\"%s\",\"%s\",%d,\"%s\",\"%s\",%d)", gSystem->ExpandPathName("$ALICE_PHYSICS/PWGPP/macros/AddTaskTrackingEffPID.C"), suffix.Data(), collSyst.Data(), useGeneratedKine, cutObjFile.Data(), cutObjNam.Data(), filtBit)));
 
   mgr->InitAnalysis();
   mgr->PrintStatus();
