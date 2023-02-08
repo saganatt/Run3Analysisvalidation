@@ -15,9 +15,8 @@ AliPhysics files were extracted separately from AliPhysics' correction framework
 
 import argparse
 
-from ROOT import (TH1F,  # pylint: disable=import-error,no-name-in-module; pylint: disable=import-error,no-name-in-module
-                  TCanvas, TFile, TLatex, TLegend, gROOT, gStyle, kGreen,
-                  kOrange, kWhite)
+# pylint: disable=import-error,no-name-in-module
+from ROOT import TH1F, TCanvas, TFile, TLatex, TLegend, gROOT, gStyle, kWhite
 
 
 def save_canvas(canvas, title):
