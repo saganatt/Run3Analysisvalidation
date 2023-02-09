@@ -24,6 +24,9 @@
         "ccdb-url": "http://alice-ccdb.cern.ch",
         "isRun2MC": "true"
     },
+    "collision-converter": {
+      "doNotSwap": "false"
+    },
     "bc-selection-task": {
         "processRun2": "true",
         "processRun3": "false"
@@ -56,7 +59,12 @@
         "processRun3": "false"
     },
     "track-selection": {
-        "isRun3": "false"
+        "isRun3": "false",
+        "produceFBextendedTable": "true",
+        "ptMin": "0.1",
+        "ptMax": "10",
+        "etaMin": "-0.8",
+        "etaMax": "0.8"
     },
     "track-propagation": {
         "processStandard": "false",
@@ -1670,6 +1678,7 @@
     },
     "qa-efficiency": {
         "noFakesHits": "false",
+        "maxProdRadius": "9999",
         "doPositivePDG": "true",
         "doNegativePDG": "true",
         "do-un-id": "true",
@@ -1690,7 +1699,7 @@
         "ptBins": {
             "values": [
                 "20",
-                "0.1",
+                "0.100000001",
                 "10"
             ]
         },
@@ -1698,8 +1707,8 @@
         "etaBins": {
             "values": [
                 "100",
-                "-0.8",
-                "0.8"
+                "-0.800000012",
+                "0.800000012"
             ]
         },
         "phiBins": {
