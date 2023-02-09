@@ -1681,16 +1681,15 @@
         "maxProdRadius": "9999",
         "doPositivePDG": "true",
         "doNegativePDG": "true",
-        "do-un-id": "true",
         "do-el": "true",
-        "do-mu": "true",
+        "do-mu": "false",
         "do-pi": "true",
         "do-ka": "true",
         "do-pr": "true",
-        "do-de": "true",
-        "do-tr": "true",
-        "do-he": "true",
-        "do-al": "true",
+        "do-de": "false",
+        "do-tr": "false",
+        "do-he": "false",
+        "do-al": "false",
         "trackSelection": "true",
         "globalTrackSelection": "0",
         "nMinNumberOfContributors": "2",
@@ -1737,14 +1736,14 @@
         },
         "yBins": {
             "values": [
-                "100",
-                "-0.5",
-                "0.5"
+                "1",
+                "-100",
+                "100"
             ]
         },
         "make-eff": "true",
         "doPtEta": "true",
-        "applyEvSel": "0",
+        "applyEvSel": "1",
         "processMC": "true",
         "processData": "false"
     },
