@@ -15,10 +15,10 @@
 
 # Steps
 DOCLEAN=1           # Delete created files (before and after running tasks).
-DOCONVERT=1         # Convert AliESDs.root to AO2D.root.
-DOALI=1             # Run AliPhysics tasks.
+DOCONVERT=0         # Convert AliESDs.root to AO2D.root.
+DOALI=0             # Run AliPhysics tasks.
 DOO2=1              # Run O2 tasks.
-DOPOSTPROCESS=1     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
+DOPOSTPROCESS=0     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
 
 # Disable incompatible steps.
 [ "$ISINPUTO2" -eq 1 ] && { DOCONVERT=0; DOALI=0; }
@@ -32,7 +32,7 @@ MAKE_GRAPH=0        # Make topology graph.
 DOO2_TRIGSEL=0      # event-selection
 # QA
 DOO2_REJ_ALICE3=0   # hf-task-qa-pid-rejection
-DOO2_QA_EFF=0       # qa-efficiency
+DOO2_QA_EFF=1       # qa-efficiency
 DOO2_QA_EVTRK=0     # qa-event-track
 DOO2_MC_VALID=0     # hf-task-mc-validation
 # PID
@@ -41,9 +41,9 @@ DOO2_PID_TOF=0      # pid-tof-full/alice3-pid-tof
 DOO2_PID_TOF_QA=0   # pid-tof-qa-mc
 DOO2_PID_BAYES=0    # pid-bayes
 # Vertexing
-DOO2_SKIM=1         # hf-track-index-skim-creator
-DOO2_CAND_2PRONG=1  # hf-candidate-creator-2prong
-DOO2_CAND_3PRONG=1  # hf-candidate-creator-3prong
+DOO2_SKIM=0         # hf-track-index-skim-creator
+DOO2_CAND_2PRONG=0  # hf-candidate-creator-2prong
+DOO2_CAND_3PRONG=0  # hf-candidate-creator-3prong
 DOO2_CAND_CASC=0    # hf-candidate-creator-cascade
 DOO2_CAND_LB=0      # hf-candidate-creator-lb
 DOO2_CAND_X=0       # hf-candidate-creator-x
@@ -67,10 +67,10 @@ DOO2_SEL_XICC=0     # hf-candidate-selector-xicc-to-p-k-pi-pi
 DOO2_SEL_B0=0       # hf-candidate-selector-b0-to-d-pi
 DOO2_SEL_BPLUS=0    # hf-candidate-selector-bplus-to-d0-pi
 # User tasks
-DOO2_TASK_D0=1      # hf-task-d0
+DOO2_TASK_D0=0      # hf-task-d0
 DOO2_TASK_DS=0      # hf-task-ds
 DOO2_TASK_DPLUS=0   # hf-task-dplus
-DOO2_TASK_LC=1      # hf-task-lc
+DOO2_TASK_LC=0      # hf-task-lc
 DOO2_TASK_LB=0      # hf-task-lb
 DOO2_TASK_XIC=0     # hf-task-xic
 DOO2_TASK_JPSI=0    # hf-task-jpsi
@@ -100,14 +100,15 @@ DOO2_TASK_D0HADRON=0          # hf-task-correlation-d0-hadrons
 DOO2_TASK_FLOW=0    # hf-task-flow
 # Other
 DOO2_MCCONV=0       # mc-converter
+DOO2_COLCONV=1       # collision-converter
 DOO2_FDDCONV=0      # fdd-converter
 DOO2_COLLCONV=0     # collision-converter
 
 # Selection cuts
-APPLYCUTS_D0=1      # Apply D0 selection cuts.
+APPLYCUTS_D0=0      # Apply D0 selection cuts.
 APPLYCUTS_DS=0      # Apply Ds selection cuts.
 APPLYCUTS_DPLUS=0   # Apply D+ selection cuts.
-APPLYCUTS_LC=1      # Apply Λc selection cuts.
+APPLYCUTS_LC=0      # Apply Λc selection cuts.
 APPLYCUTS_LB=0      # Apply Λb selection cuts.
 APPLYCUTS_XIC=0     # Apply Ξc selection cuts.
 APPLYCUTS_JPSI=0    # Apply J/ψ selection cuts.
@@ -405,6 +406,7 @@ function MakeScriptO2 {
   [ $DOO2_TREE_BPLUS -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-tree-creator-bplus-to-d0-pi"
   # Other
   [ $DOO2_MCCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-mc-converter"
+  [ $DOO2_COLCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-collision-converter"
   [ $DOO2_FDDCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-fdd-converter"
   [ $DOO2_COLLCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-collision-converter"
 
