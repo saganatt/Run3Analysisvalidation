@@ -6,7 +6,7 @@ options:
     - "--configuration json://$JSON"
     - "--aod-memory-rate-limit 2000000000"
     - "--shm-segment-size 16000000000"
-    - "--min-failure-level error"
+      #    - "--min-failure-level error"
 
 workflows:
   o2-analysis-hf-track-to-collision-associator:
