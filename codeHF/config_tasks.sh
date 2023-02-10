@@ -15,9 +15,9 @@
 
 # Steps
 DOCLEAN=1           # Delete created files (before and after running tasks).
-DOCONVERT=1         # Convert AliESDs.root to AO2D.root.
-DOALI=0             # Run AliPhysics tasks.
-DOO2=1              # Run O2 tasks.
+DOCONVERT=0         # Convert AliESDs.root to AO2D.root.
+DOALI=1             # Run AliPhysics tasks.
+DOO2=0              # Run O2 tasks.
 DOPOSTPROCESS=0     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
 
 # Disable incompatible steps.
