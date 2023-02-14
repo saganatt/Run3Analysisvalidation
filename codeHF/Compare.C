@@ -3,12 +3,12 @@
 #include "utils_plot.h"
 
 // vectors of histogram specifications
-using VecSpecHis = std::vector<std::tuple<TString, TString, TString, int, bool, bool, TString, TString>>;
+using VecSpecHis = std::vector<std::tuple<TString, TString, TString, int, bool, bool, TString>>;
 
 // Add histogram specification in the vector.
-void AddHistogram(VecSpecHis& vec, TString label, TString nameAli, TString nameO2, int rebin, bool logH, bool logR, TString proj = "x", TString projRun2 = "")
+void AddHistogram(VecSpecHis& vec, TString label, TString nameAli, TString nameO2, int rebin, bool logH, bool logR, TString proj = "x")
 {
-  vec.push_back(std::make_tuple(label, nameAli, nameO2, rebin, logH, logR, proj, projRun2));
+  vec.push_back(std::make_tuple(label, nameAli, nameO2, rebin, logH, logR, proj));
 }
 
 Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "AnalysisResults_ALI.root", TString options = "", bool doRatio = false)
@@ -211,7 +211,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisQAEff, "Number of processed events", "hNEvents", "qa-efficiency/eventSelection", 1, 1, 0);
   AddHistogram(vecHisQAEff, "Number of processed particles", "hNParticles", "qa-efficiency/MC/particleSelection", 1, 1, 0);
   AddHistogram(vecHisQAEff, "Number of processed tracks", "hNTracks", "qa-efficiency/MC/trackSelection", 1, 1, 0);
-  AddHistogram(vecHisQAEff, "Generated particles in selected events", "hGenEvSel_el_neg", "qa-efficiency/MC/el/neg/pt/generated", 1, 1, 0, "x", "y");
+  AddHistogram(vecHisQAEff, "Generated particles in selected events", "hGenEvSel_el_neg", "qa-efficiency/MC/el/neg/pt/generated", 1, 1, 0, "x");
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
@@ -302,21 +302,9 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       logScaleH = std::get<4>(spec);
       logScaleR = std::get<5>(spec);
       projAx = std::get<6>(spec);
-      projAxRun2 = std::get<7>(spec);
 
       // Get AliPhysics histogram.
-      if (projAxRun2 == "") {
-        hAli = (TH1F*)lAli->FindObject(nameHisAli.Data());
-      } else {
-        oAli = fAli->Get(nameHisAli.Data());
-        if (oAli->InheritsFrom("THnSparse")) {
-          if (projAxAli == "x") {
-            hAli = ((THnSparseF)oAli)->ProjectionX();
-          } else if (projAxAli == "y") {
-            hAli = ((THnSparseF)oAli)->ProjectionY();
-          }
-        }
-      }
+      hAli = (TH1F*)lAli->FindObject(nameHisAli.Data());
       if (!hAli) {
         printf("Failed to load %s from %s\n", nameHisAli.Data(), filerun2.Data());
         return 1;
