@@ -470,7 +470,12 @@ function MakeScriptPostprocess {
     [ $DOO2_TASK_LC -eq 1 ] && { OPT_COMPARE+=" lc "; [ "$ISMC" -eq 1 ] && OPT_COMPARE+=" lc-mc-pt  lc-mc-prompt  lc-mc-nonprompt  lc-mc-eta  lc-mc-phi "; }
     [ $DOO2_TASK_XIC -eq 1 ] && OPT_COMPARE+=" xic "
     [ $DOO2_TASK_JPSI -eq 1 ] && OPT_COMPARE+=" jpsi "
-    [ $DOO2_QA_EFF -eq 1 ] && { OPT_COMPARE+=" qaeff "; POSTEXEC+=" && root -b -q -l \"$ALICE_PHYSICS/PWGPP/analysisQA/ProcessTrackingEffPID.C(\\\"AnalysisResults_ALI.root\\\", \\\"\\\")\" && root -b -q -l \"$DIR_TASKS/Compare.C(\\\"\$FileO2\\\", \\\"TrackingEffPID.root\\\", \\\"$OPT_COMPARE\\\", $DORATIO)\""; }
+    [ $DOO2_QA_EFF -eq 1 ] && { OPT_COMPARE+=" qaeff ";
+     POSTEXEC+=" && ALIPATH=\$($ENVALI bash -c \"echo \\\$ALICE_PHYSICS\") &&
+       $ENVALI root -b -q -l \"\$ALIPATH/../../../../AliPhysics/PWGPP/analysisQA/ProcessTrackingEffPID.C(\\\"AnalysisResults_ALI.root\\\", \\\"\\\")\" &&
+       rm -f  Merged_ALI.root &&
+       $ENVALI bash -c \"hadd Merged_ALI.root AnalysisResults_ALI.root TrackingEffPID.root\" &&
+       root -b -q -l \"$DIR_TASKS/Compare.C(\\\"\$FileO2\\\", \\\"Merged_ALI.root\\\", \\\"$OPT_COMPARE\\\", $DORATIO)\""; }
     [ "$OPT_COMPARE" ] && [ $DOO2_QA_EFF -eq 0 ] && POSTEXEC+=" && root -b -q -l \"$DIR_TASKS/Compare.C(\\\"\$FileO2\\\", \\\"\$FileAli\\\", \\\"$OPT_COMPARE\\\", $DORATIO)\""
   }
   # Plot particle reconstruction efficiencies.
