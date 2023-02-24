@@ -3,7 +3,7 @@
 #include "utils_plot.h"
 
 // vectors of histogram specifications
-using VecSpecHis = std::vector<std::tuple<TString, TString, TString, int, bool, bool, TString>>;
+using VecSpecHis = std::vector<std::tuple<TString, TString, TString, int, bool, bool, TString, int>>;
 
 // Add histogram specification in the vector.
 void AddHistogram(VecSpecHis& vec, TString label, TString nameAli, TString nameO2, int rebin, bool logH, bool logR, TString proj = "x", int projRun2 = -1)
@@ -214,7 +214,15 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   //AddHistogram(vecHisQAEff, "Number of processed events", "hNEvents", "qa-efficiency/eventSelection", 1, 1, 0);
   //AddHistogram(vecHisQAEff, "Number of processed particles", "hNParticles", "qa-efficiency/MC/particleSelection", 1, 1, 0);
   //AddHistogram(vecHisQAEff, "Number of processed tracks", "hNTracks", "qa-efficiency/MC/trackSelection", 1, 1, 0);
-  AddHistogram(vecHisQAEff, "Generated particles in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/neg/pt/generated", 1, 1, 0, "x", 2);
+
+  AddHistogram(vecHisQAEff, "Generated neg el in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated pos el in selected events", "hGenEvSel_e_pos", "qa-efficiency/MC/el/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated neg pions in selected events", "hGenEvSel_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated pos pions in selected events", "hGenEvSel_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated neg protons in selected events", "hGenEvSel_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated pos protons in selected events", "hGenEvSel_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated neg kaons in selected events", "hGenEvSel_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEff, "Generated pos kaons in selected events", "hGenEvSel_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/generated", 1, 1, 0, "x", 2);
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
@@ -253,7 +261,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   if (options.Contains(" jpsi "))
     vecSpecVecSpec.push_back(std::make_tuple("jpsi", vecHisJpsi, 5, 3));
   if (options.Contains(" qaeff "))
-    vecSpecVecSpec.push_back(std::make_tuple("qaeff", vecHisQAEff, 5, 3));
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff", vecHisQAEff, 4, 4));
 
   // Histogram plot vertical margins
   Float_t marginHigh = 0.05;
@@ -266,7 +274,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   Float_t yMin, yMax;
   Int_t nAli, nO2, rebin;
 
-  TH1F* hAli = nullptr;
+  TH1D* hAli = nullptr;
   TH1D* hO2 = nullptr;
   TH1F* hRatio = nullptr;
   TString labelAxis = "";
@@ -311,11 +319,51 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       // Get AliPhysics histogram.
       auto oAli = lAli->FindObject(nameHisAli.Data());
       if (!oAli) {
-        printf("Failed to load %s from %s\n", nameHisAli.Data(), filerun2.Data());
-        return 1;
+        oAli = fAli->Get(nameHisAli.Data());
+        if (!oAli) {
+          printf("Failed to load %s from %s\n", nameHisAli.Data(), filerun2.Data());
+          return 1;
+        }
       }
 
-      // TODO: Run2 if-else for THnSparse projections
+      if (oRun2->InheritsFrom("THnSparse")) {
+        Double_t ptmin = 0.1, ptmax = 10.0;
+        auto hSparse = ((THnSparseF*)oRun2);
+        // cut at |eta|<0.8 if projecting vs. other variables
+        //if (projAxRun2 != 0) {
+        //  TAxis* ax0 = hSparse->GetAxis(0);
+        //  Int_t bl = ax0->FindBin(-0.7999);
+        //  Int_t bu = ax0->FindBin(0.7999);
+        //  ax0->SetRange(bl, bu);
+        //}
+        //if(projAxRun2 != 2 && ptmin > 0 && ptmax < 100) {
+        //  TAxis* ax2 = hSparse->GetAxis(2);
+        //  Int_t bl = ax2->FindBin(ptmin*1.0001);
+        //  Int_t bu = ax2->FindBin(ptmax*0.9999);
+        //  ax2->SetRange(bl, bu);
+        //}
+        //// cut zvertex at 10 cm
+        //TAxis* ax4 = hSparse->GetAxis(4);
+        //Int_t bl = ax4->FindBin(-9.9999);
+        //Int_t bu = ax4->FindBin(9.9999);
+        //ax4->SetRange(bl, bu);
+        hRun2 = hSparse->Projection(projAxRun2);
+        hRun2->Sumw2();
+      } else if (oRun2->InheritsFrom("TH3")) {
+        if (projAxRun2 == 0) {
+          hRun2 = ((TH3D*)oRun2)->ProjectionX();
+        } else if (projAxRun2 == 1) {
+          hRun2 = ((TH3D*)oRun2)->ProjectionY();
+        }
+      } else if (oRun2->InheritsFrom("TH2")) {
+        if (projAxRun2 == 0) {
+          hRun2 = ((TH2D*)oRun2)->ProjectionX();
+        } else if (projAxRun2 == 1) {
+          hRun2 = ((TH2D*)oRun2)->ProjectionY();
+        }
+      } else {
+        hRun2 = (TH1D*)oRun2;
+      }
 
       // Get O2 histogram.
       auto oO2 = fO2->Get(nameHisO2.Data());
@@ -373,7 +421,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       // Ratio
       if (doRatio) {
         auto padR = canRat->cd(index + 1);
-        hRatio = (TH1F*)hO2->Clone(Form("hRatio%d", index));
+        hRatio = (TH1D*)hO2->Clone(Form("hRatio%d", index));
         hRatio->Divide(hAli);
         hRatio->SetTitle(Form("Entries ratio: %g;%s;O2/Ali", (double)nO2 / (double)nAli, labelAxis.Data()));
         yMin = hRatio->GetMinimum(0);
