@@ -1675,7 +1675,7 @@
     },
     "qa-efficiency": {
         "noFakesHits": "false",
-        "maxProdRadius": "9999",
+        "maxProdRadius": "999.0",
         "doPositivePDG": "true",
         "doNegativePDG": "true",
         "do-el": "true",
@@ -1707,38 +1707,52 @@
             "values": [
                 "0",
                 "0",
+                "0.05",
+                "0.10",
+                "0.15",
+                "0.20",
                 "0.25",
+                "0.30",
+                "0.35",
+                "0.40",
                 "0.5",
-                "0.75",
+                "0.60",
+                "0.70",
+                "0.80",
+                "0.90",
                 "1",
+                "1.25",
                 "1.5",
+                "1.75",
                 "2",
                 "2.5",
                 "3",
+                "3.5",
                 "4",
+                "4.5",
                 "5",
                 "6",
                 "7",
                 "8",
                 "10",
                 "12",
-                "14",
                 "16",
-                "24"
+                "20",
+                "30"
             ]
         },
         "log-pt": "0",
         "etaBins": {
             "values": [
-                "9",
+                "10",
                 "-0.9",
                 "0.9"
             ]
         },
         "phiBins": {
             "values": [
-                "16",
-                "-6.2832",
+                "18",
+                "0",
                 "6.2832"
             ]
         },
@@ -1751,7 +1765,7 @@
         },
         "make-eff": "true",
         "doPtEta": "true",
-        "applyEvSel": "1",
+        "applyEvSel": "0",
         "processMC": "true",
         "processMCWithoutCollisions": "false",
         "processData": "false"
