@@ -100,7 +100,6 @@ DOO2_TASK_D0HADRON=0          # hf-task-correlation-d0-hadrons
 DOO2_TASK_FLOW=0    # hf-task-flow
 # Other
 DOO2_MCCONV=0       # mc-converter
-DOO2_COLCONV=0       # collision-converter
 DOO2_FDDCONV=0      # fdd-converter
 DOO2_COLLCONV=0     # collision-converter
 
@@ -406,7 +405,6 @@ function MakeScriptO2 {
   [ $DOO2_TREE_BPLUS -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-tree-creator-bplus-to-d0-pi"
   # Other
   [ $DOO2_MCCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-mc-converter"
-  [ $DOO2_COLCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-collision-converter"
   [ $DOO2_FDDCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-fdd-converter"
   [ $DOO2_COLLCONV -eq 1 ] && WORKFLOWS+=" o2-analysis-collision-converter"
 
