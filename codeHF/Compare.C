@@ -6,9 +6,9 @@
 using VecSpecHis = std::vector<std::tuple<TString, TString, TString, int, bool, bool, TString, int>>;
 
 // Add histogram specification in the vector.
-void AddHistogram(VecSpecHis& vec, TString label, TString nameAli, TString nameO2, int rebin, bool logH, bool logR, TString proj = "x", int projRun2 = -1)
+void AddHistogram(VecSpecHis& vec, TString label, TString nameAli, TString nameO2, int rebin, bool logH, bool logR, TString proj = "x", int projAli = -1)
 {
-  vec.push_back(std::make_tuple(label, nameAli, nameO2, rebin, logH, logR, proj, projRun2));
+  vec.push_back(std::make_tuple(label, nameAli, nameO2, rebin, logH, logR, proj, projAli));
 }
 
 Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "AnalysisResults_ALI.root", TString options = "", bool doRatio = false)
@@ -30,7 +30,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   }
 
   TString pathListAli = "HFVertices/clistHFVertices";
-  if (filerun2 == "Merged_ALI.root") {
+  if (fileAli == "Merged_ALI.root") {
     pathListAli = "TrackEffPID/listTrackEffPID";
   }
   TList* lAli = nullptr;
@@ -276,12 +276,12 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
 
   TH1D* hAli = nullptr;
   TH1D* hO2 = nullptr;
-  TH1F* hRatio = nullptr;
+  TH1D* hRatio = nullptr;
   TString labelAxis = "";
   TString nameHisAli = "";
   TString nameHisO2 = "";
   TString projAx = "";
-  int projAxRun2 = -1;
+  int projAli = -1;
   TCanvas* canHis = nullptr;
   TCanvas* canRat = nullptr;
 
@@ -314,29 +314,29 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       logScaleH = std::get<4>(spec);
       logScaleR = std::get<5>(spec);
       projAx = std::get<6>(spec);
-      projAxRun2 = std::get<7>(spec);
+      projAli = std::get<7>(spec);
 
       // Get AliPhysics histogram.
       auto oAli = lAli->FindObject(nameHisAli.Data());
       if (!oAli) {
         oAli = fAli->Get(nameHisAli.Data());
         if (!oAli) {
-          printf("Failed to load %s from %s\n", nameHisAli.Data(), filerun2.Data());
+          printf("Failed to load %s from %s\n", nameHisAli.Data(), fileAli.Data());
           return 1;
         }
       }
 
-      if (oRun2->InheritsFrom("THnSparse")) {
+      if (oAli->InheritsFrom("THnSparse")) {
         Double_t ptmin = 0.1, ptmax = 10.0;
-        auto hSparse = ((THnSparseF*)oRun2);
+        auto hSparse = ((THnSparseF*)oAli);
         // cut at |eta|<0.8 if projecting vs. other variables
-        //if (projAxRun2 != 0) {
+        //if (projAli != 0) {
         //  TAxis* ax0 = hSparse->GetAxis(0);
         //  Int_t bl = ax0->FindBin(-0.7999);
         //  Int_t bu = ax0->FindBin(0.7999);
         //  ax0->SetRange(bl, bu);
         //}
-        //if(projAxRun2 != 2 && ptmin > 0 && ptmax < 100) {
+        //if(projAli != 2 && ptmin > 0 && ptmax < 100) {
         //  TAxis* ax2 = hSparse->GetAxis(2);
         //  Int_t bl = ax2->FindBin(ptmin*1.0001);
         //  Int_t bu = ax2->FindBin(ptmax*0.9999);
@@ -347,22 +347,22 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
         //Int_t bl = ax4->FindBin(-9.9999);
         //Int_t bu = ax4->FindBin(9.9999);
         //ax4->SetRange(bl, bu);
-        hRun2 = hSparse->Projection(projAxRun2);
-        hRun2->Sumw2();
-      } else if (oRun2->InheritsFrom("TH3")) {
-        if (projAxRun2 == 0) {
-          hRun2 = ((TH3D*)oRun2)->ProjectionX();
-        } else if (projAxRun2 == 1) {
-          hRun2 = ((TH3D*)oRun2)->ProjectionY();
+        hAli = hSparse->Projection(projAli);
+        hAli->Sumw2();
+      } else if (oAli->InheritsFrom("TH3")) {
+        if (projAli == 0) {
+          hAli = ((TH3D*)oAli)->ProjectionX();
+        } else if (projAli == 1) {
+          hAli = ((TH3D*)oAli)->ProjectionY();
         }
-      } else if (oRun2->InheritsFrom("TH2")) {
-        if (projAxRun2 == 0) {
-          hRun2 = ((TH2D*)oRun2)->ProjectionX();
-        } else if (projAxRun2 == 1) {
-          hRun2 = ((TH2D*)oRun2)->ProjectionY();
+      } else if (oAli->InheritsFrom("TH2")) {
+        if (projAli == 0) {
+          hAli = ((TH2D*)oAli)->ProjectionX();
+        } else if (projAli == 1) {
+          hAli = ((TH2D*)oAli)->ProjectionY();
         }
       } else {
-        hRun2 = (TH1D*)oRun2;
+        hAli = (TH1D*)oAli;
       }
 
       // Get O2 histogram.
