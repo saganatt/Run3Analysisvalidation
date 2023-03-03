@@ -163,9 +163,12 @@ function AdjustJson {
   # MC
   if [ "$ISMC" -eq 1 ]; then
     MsgWarn "Using MC data"
-    ReplaceString "\"processMc\": \"false\"" "\"processMc\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
-    ReplaceString "\"processMC\": \"false\"" "\"processMC\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
     ReplaceString "\"isMC\": \"false\"" "\"isMC\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
+    ReplaceString "\"processMc\": \"false\"" "\"processMc\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
+    if [ "$DOO2_QA_EFF" -eq 0 ]; then
+      ReplaceString "\"processMC\": \"false\"" "\"processMC\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
+      # processMC needs to be set manually by the analyzer so as to decide on process in qa-efficiency
+    fi
   else
     MsgWarn "Using real data"
     ReplaceString "\"processMc\": \"true\"" "\"processMc\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
