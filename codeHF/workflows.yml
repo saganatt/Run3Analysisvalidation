@@ -343,6 +343,10 @@ workflows:
     requires_mc: yes
     dependencies: [o2-analysis-hf-candidate-creator-2prong, o2-analysis-hf-candidate-creator-3prong]
 
+  o2-analysis-alice3-qa-singleparticle:
+    requires_mc: yes
+    dependencies: [o2-analysis-track-dca_runX]
+
   # Helper tasks
 
   o2-analysis-timestamp: {}
