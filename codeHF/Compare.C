@@ -373,18 +373,21 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       }
 
       if (oO2->InheritsFrom("TH3")) {
+        Printf("O2 TH3 projecting");
         if (projAx == "x") {
           hO2 = ((TH3D*)oO2)->ProjectionX();
         } else if (projAx == "y") {
           hO2 = ((TH3D*)oO2)->ProjectionY();
         }
       } else if (oO2->InheritsFrom("TH2")) {
+        Printf("O2 TH2 projecting");
         if (projAx == "x") {
           hO2 = ((TH2D*)oO2)->ProjectionX();
         } else if (projAx == "y") {
           hO2 = ((TH2D*)oO2)->ProjectionY();
         }
       } else {
+        Printf("O2 TH1D");
         hO2 = (TH1D*)oO2;
       }
 
@@ -396,6 +399,8 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
 
       nAli = hAli->GetEntries();
       nO2 = hO2->GetEntries();
+
+      Printf("%d entries Ali, %d entries O2", nAli, nO2);
 
       // Histograms
       auto padH = canHis->cd(index + 1);
