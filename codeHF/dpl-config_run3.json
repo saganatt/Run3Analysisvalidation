@@ -1765,7 +1765,7 @@
         },
         "make-eff": "true",
         "doPtEta": "true",
-        "applyEvSel": "0",
+        "applyEvSel": "1",
         "processMC": "true",
         "processMCWithoutCollisions": "false",
         "processData": "false"
