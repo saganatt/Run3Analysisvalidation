@@ -261,7 +261,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   if (options.Contains(" jpsi "))
     vecSpecVecSpec.push_back(std::make_tuple("jpsi", vecHisJpsi, 5, 3));
   if (options.Contains(" qaeff "))
-    vecSpecVecSpec.push_back(std::make_tuple("qaeff", vecHisQAEff, 4, 4));
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff", vecHisQAEff, 4, 2));
 
   // Histogram plot vertical margins
   Float_t marginHigh = 0.05;
