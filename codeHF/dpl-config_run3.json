@@ -1687,7 +1687,7 @@
         "do-tr": "false",
         "do-he": "false",
         "do-al": "false",
-        "trackSelection": "true",
+        "trackSelection": "false",
         "trackTypeCfg": "254",
         "dcaZMax": "999",
         "goldenChi2": "false",
