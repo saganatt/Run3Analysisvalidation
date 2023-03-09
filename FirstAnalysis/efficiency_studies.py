@@ -143,8 +143,8 @@ def efficiency_tracking(
     Pt plots are drawn for primaries.
     If sign = "All", efficiency is plot for pos+neg together.
     """
-    hadron_list = ["All", "Pion", "Kaon", "Proton", "Electron"]
-    hist_hadron_list = ["all", "pi", "ka", "pr", "el"]
+    hadron_list = ["Pion", "Kaon", "Proton", "Electron"]
+    hist_hadron_list = ["pi", "ka", "pr", "el"]
     # Other hadrons: "Deuteron", "Triton", "He3", "Alpha"
     color_list = [1, 2, 4, kGreen + 2, kOrange - 3]
     marker_list = [20, 21, 22, 21, 22]
@@ -195,6 +195,8 @@ def efficiency_tracking(
 
     leg_all.Draw()
     save_canvas(c_all, f"efficiency_tracking_{det}_{sign}_{var}")
+
+
 
 
 def efficiency_hadron(had, var):
