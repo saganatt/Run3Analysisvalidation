@@ -210,19 +210,35 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisJpsi, "decay length error (cm)", "hDecLenErrJpsi", "hf-task-jpsi/hDecLenErr", 1, 1, 0);
   AddHistogram(vecHisJpsi, "decay length XY error (cm)", "hDecLenXYErrJpsi", "hf-task-jpsi/hDecLenXYErr", 1, 1, 0);
 
-  VecSpecHis vecHisQAEff;
-  //AddHistogram(vecHisQAEff, "Number of processed events", "hNEvents", "qa-efficiency/eventSelection", 1, 1, 0);
-  //AddHistogram(vecHisQAEff, "Number of processed particles", "hNParticles", "qa-efficiency/MC/particleSelection", 1, 1, 0);
-  //AddHistogram(vecHisQAEff, "Number of processed tracks", "hNTracks", "qa-efficiency/MC/trackSelection", 1, 1, 0);
+  VecSpecHis vecHisQAEffGen;
+  VecSpecHis vecHisQAEffReco;
 
-  AddHistogram(vecHisQAEff, "Generated neg el in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated pos el in selected events", "hGenEvSel_e_pos", "qa-efficiency/MC/el/pos/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated neg pions in selected events", "hGenEvSel_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated pos pions in selected events", "hGenEvSel_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated neg protons in selected events", "hGenEvSel_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated pos protons in selected events", "hGenEvSel_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated neg kaons in selected events", "hGenEvSel_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEff, "Generated pos kaons in selected events", "hGenEvSel_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg el in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos el in selected events", "hGenEvSel_e_pos", "qa-efficiency/MC/el/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg pions in selected events", "hGenEvSel_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos pions in selected events", "hGenEvSel_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg protons in selected events", "hGenEvSel_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos protons in selected events", "hGenEvSel_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg kaons in selected events", "hGenEvSel_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos kaons in selected events", "hGenEvSel_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg el in selected events", "hReconstructed_e_neg", "qa-efficiency/MC/el/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos el in selected events", "hReconstructed_e_pos", "qa-efficiency/MC/el/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg pions in selected events", "hReconstructed_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos pions in selected events", "hReconstructed_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg protons in selected events", "hReconstructed_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos protons in selected events", "hReconstructed_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg kaons in selected events", "hReconstructed_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos kaons in selected events", "hReconstructed_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg el in selected events", "hReconstructedTOF_e_neg", "qa-efficiency/MC/el/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos el in selected events", "hReconstructedTOF_e_pos", "qa-efficiency/MC/el/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg pions in selected events", "hReconstructedTOF_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos pions in selected events", "hReconstructedTOF_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg protons in selected events", "hReconstructedTOF_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos protons in selected events", "hReconstructedTOF_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg kaons in selected events", "hReconstructedTOF_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos kaons in selected events", "hReconstructedTOF_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
@@ -261,7 +277,8 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   if (options.Contains(" jpsi "))
     vecSpecVecSpec.push_back(std::make_tuple("jpsi", vecHisJpsi, 5, 3));
   if (options.Contains(" qaeff "))
-    vecSpecVecSpec.push_back(std::make_tuple("qaeff", vecHisQAEff, 4, 2));
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff_gen", vecHisQAEffGen, 4, 2));
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff_reco", vecHisQAEffReco, 4, 4));
 
   // Histogram plot vertical margins
   Float_t marginHigh = 0.05;
