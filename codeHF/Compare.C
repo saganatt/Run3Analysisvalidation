@@ -212,6 +212,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
 
   VecSpecHis vecHisQAEffGen;
   VecSpecHis vecHisQAEffReco;
+  VecSpecHis vecHisQAEffRaw;
 
   AddHistogram(vecHisQAEffGen, "Generated primary neg el in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/neg/pt/prm/generated", 1, 1, 0, "x", 2);
   AddHistogram(vecHisQAEffGen, "Generated primary pos el in selected events", "hGenEvSel_e_pos", "qa-efficiency/MC/el/pos/pt/prm/generated", 1, 1, 0, "x", 2);
@@ -239,6 +240,10 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos protons in selected events", "hReconstructedTOF_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
   AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg kaons in selected events", "hReconstructedTOF_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
   AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos kaons in selected events", "hReconstructedTOF_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+
+  AddHistogram(vecHisQAEffRaw, "Raw track pt", "rawPt", "qa-efficiency/rawPt", 1, 1, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw track eta", "rawEta", "qa-efficiency/rawEta", 1, 1, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw track phi", "rawPhi", "qa-efficiency/rawPhi", 1, 1, 0);
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
@@ -279,6 +284,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   if (options.Contains(" qaeff "))
     vecSpecVecSpec.push_back(std::make_tuple("qaeff_gen", vecHisQAEffGen, 4, 2));
     vecSpecVecSpec.push_back(std::make_tuple("qaeff_reco", vecHisQAEffReco, 4, 4));
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff_raw", vecHisQAEffRaw, 3, 1));
 
   // Histogram plot vertical margins
   Float_t marginHigh = 0.05;
@@ -439,6 +445,17 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       legend->AddEntry(hAli, "Ali", "L");
       legend->AddEntry(hO2, "O2", "L");
       legend->Draw();
+
+      float diffO2Ali = 0;
+      Printf("%f underflow Ali, %f underflow O2, %f overflow Ali, %f overflow O2", hAli->GetBinContent(0), hO2->GetBinContent(0),
+              hAli->GetBinContent(hAli->GetNbinsX()), hO2->GetBinContent(hO2->GetNbinsX()));
+      Printf("Bin contents:");
+      for (int i = 0; i < hAli->GetNbinsX(); i++) {
+        float binAli = hAli->GetBinContent(i);
+        float binO2 = hO2->GetBinContent(i);
+        diffO2Ali += binO2 - binAli;
+        Printf("Ali: %f, O2: %f O2 - Ali: %f acc diff: %f ratio O2 / Ali: %f", binAli, binO2, binO2 - binAli, diffO2Ali, binO2 / binAli);
+      }
 
       // Ratio
       if (doRatio) {
