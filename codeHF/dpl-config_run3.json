@@ -1687,16 +1687,17 @@
         "do-tr": "false",
         "do-he": "false",
         "do-al": "false",
-        "trackSelection": "false",
+        "trackSelection": "true",
         "trackTypeCfg": "254",
-        "dcaZMax": "999",
+        "dcaZMax": "3.2",
+        "dcaXYMax": "2.4",
         "goldenChi2": "false",
-        "ITSChi2Max": "999",
+        "ITSChi2Max": "36",
         "ITSNClusterMin": "2",
         "ITSRefit": "true",
-        "TPCChi2Max": "999",
-        "TPCNClusterMin": "70",
-        "TPCNCrossedRowsMin": "0",
+        "TPCChi2Max": "4",
+        "TPCNClusterMin": "0",
+        "TPCNCrossedRowsMin": "70",
         "TPCNCrossedRowsOverFindableClstMin": "0.8",
         "TPCRefit": "true",
         "globalTrackSelection": "0",
@@ -1755,8 +1756,8 @@
         "etaBins": {
             "values": [
                 "10",
-                "-0.9",
-                "0.9"
+                "-0.8",
+                "0.8"
             ]
         },
         "phiBins": {
@@ -1776,6 +1777,17 @@
         "make-eff": "true",
         "doPtEta": "true",
         "applyEvSel": "1",
+        "itsPattern": "0",
+        "requireITS": "true",
+        "requireTPC": "true",
+        "requireGoldenChi2": "false",
+        "minNCrossedRowsTPC": "70",
+        "minNCrossedRowsOverFindableClustersTPC": "0.8",
+        "maxChi2PerClusterTPC": "4",
+        "maxChi2PerClusterITS": "36",
+        "maxDcaXYFactor": "2.4",
+        "maxDcaZ": "3.2",
+        "minTPCNClsFound": "0",
         "processMC": "true",
         "processMCWithoutCollisions": "false",
         "processData": "false"
