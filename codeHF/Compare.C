@@ -214,32 +214,32 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   VecSpecHis vecHisQAEffReco;
   VecSpecHis vecHisQAEffRaw;
 
-  AddHistogram(vecHisQAEffGen, "Generated primary neg el in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary pos el in selected events", "hGenEvSel_e_pos", "qa-efficiency/MC/el/pos/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary neg pions in selected events", "hGenEvSel_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary pos pions in selected events", "hGenEvSel_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary neg protons in selected events", "hGenEvSel_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary pos protons in selected events", "hGenEvSel_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary neg kaons in selected events", "hGenEvSel_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/generated", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffGen, "Generated primary pos kaons in selected events", "hGenEvSel_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg el in selected events", "hGenEvSel_e_neg", "qa-efficiency/MC/el/pos_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos el in selected events", "hGenEvSel_e_pos", "qa-efficiency/MC/el/neg_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg pions in selected events", "hGenEvSel_pi_neg", "qa-efficiency/MC/pi/neg_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos pions in selected events", "hGenEvSel_pi_pos", "qa-efficiency/MC/pi/pos_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg protons in selected events", "hGenEvSel_p_neg", "qa-efficiency/MC/pr/neg_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos protons in selected events", "hGenEvSel_p_pos", "qa-efficiency/MC/pr/pos_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary neg kaons in selected events", "hGenEvSel_K_neg", "qa-efficiency/MC/ka/neg_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffGen, "Generated primary pos kaons in selected events", "hGenEvSel_K_pos", "qa-efficiency/MC/ka/pos_pdg/pt/prm/generated", 1, 1, 0, "x", 2);
 
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg el in selected events", "hReconstructed_e_neg", "qa-efficiency/MC/el/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos el in selected events", "hReconstructed_e_pos", "qa-efficiency/MC/el/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg pions in selected events", "hReconstructed_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos pions in selected events", "hReconstructed_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg protons in selected events", "hReconstructed_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos protons in selected events", "hReconstructed_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg kaons in selected events", "hReconstructed_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos kaons in selected events", "hReconstructed_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg el in selected events", "hReconstructed_e_neg", "qa-efficiency/MC/el/pos_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos el in selected events", "hReconstructed_e_pos", "qa-efficiency/MC/el/neg_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg pions in selected events", "hReconstructed_pi_neg", "qa-efficiency/MC/pi/neg_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos pions in selected events", "hReconstructed_pi_pos", "qa-efficiency/MC/pi/pos_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg protons in selected events", "hReconstructed_p_neg", "qa-efficiency/MC/pr/neg_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos protons in selected events", "hReconstructed_p_pos", "qa-efficiency/MC/pr/pos_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC neg kaons in selected events", "hReconstructed_K_neg", "qa-efficiency/MC/ka/neg_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC pos kaons in selected events", "hReconstructed_K_pos", "qa-efficiency/MC/ka/pos_pdg/pt/prm/its_tpc", 1, 1, 0, "x", 2);
 
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg el in selected events", "hReconstructedTOF_e_neg", "qa-efficiency/MC/el/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos el in selected events", "hReconstructedTOF_e_pos", "qa-efficiency/MC/el/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg pions in selected events", "hReconstructedTOF_pi_neg", "qa-efficiency/MC/pi/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos pions in selected events", "hReconstructedTOF_pi_pos", "qa-efficiency/MC/pi/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg protons in selected events", "hReconstructedTOF_p_neg", "qa-efficiency/MC/pr/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos protons in selected events", "hReconstructedTOF_p_pos", "qa-efficiency/MC/pr/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg kaons in selected events", "hReconstructedTOF_K_neg", "qa-efficiency/MC/ka/neg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
-  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos kaons in selected events", "hReconstructedTOF_K_pos", "qa-efficiency/MC/ka/pos/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg el in selected events", "hReconstructedTOF_e_neg", "qa-efficiency/MC/el/pos_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos el in selected events", "hReconstructedTOF_e_pos", "qa-efficiency/MC/el/neg_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg pions in selected events", "hReconstructedTOF_pi_neg", "qa-efficiency/MC/pi/neg_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos pions in selected events", "hReconstructedTOF_pi_pos", "qa-efficiency/MC/pi/pos_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg protons in selected events", "hReconstructedTOF_p_neg", "qa-efficiency/MC/pr/neg_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos protons in selected events", "hReconstructedTOF_p_pos", "qa-efficiency/MC/pr/pos_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg kaons in selected events", "hReconstructedTOF_K_neg", "qa-efficiency/MC/ka/neg_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
+  AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos kaons in selected events", "hReconstructedTOF_K_pos", "qa-efficiency/MC/ka/pos_pdg/pt/prm/its_tpc_tof", 1, 1, 0, "x", 2);
 
   AddHistogram(vecHisQAEffRaw, "Raw track pt", "rawPt", "qa-efficiency/rawPt", 1, 1, 0);
   AddHistogram(vecHisQAEffRaw, "Raw track eta", "rawEta", "qa-efficiency/rawEta", 1, 1, 0);
