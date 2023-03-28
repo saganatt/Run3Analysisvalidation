@@ -241,9 +241,9 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF neg kaons in selected events", "hReconstructedTOF_K_neg", "qa-efficiency/MC/ka/neg_pdg/pt/prm/its_tpc_tof", 1, 0, 0, "x", 2);
   AddHistogram(vecHisQAEffReco, "Reconstructed ITS-TPC-TOF pos kaons in selected events", "hReconstructedTOF_K_pos", "qa-efficiency/MC/ka/pos_pdg/pt/prm/its_tpc_tof", 1, 0, 0, "x", 2);
 
-  AddHistogram(vecHisQAEffRaw, "Raw track pt", "rawPt", "qa-efficiency/rawPt", 1, 1, 0);
-  AddHistogram(vecHisQAEffRaw, "Raw track eta", "rawEta", "qa-efficiency/rawEta", 1, 1, 0);
-  AddHistogram(vecHisQAEffRaw, "Raw track phi", "rawPhi", "qa-efficiency/rawPhi", 1, 1, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw track pt", "rawPt", "qa-efficiency/rawPt", 1, 0, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw track eta", "rawEta", "qa-efficiency/rawEta", 1, 0, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw track phi", "rawPhi", "qa-efficiency/rawPhi", 1, 0, 0);
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
