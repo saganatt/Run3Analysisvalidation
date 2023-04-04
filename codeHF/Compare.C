@@ -448,14 +448,20 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
       legend->Draw();
 
       float diffO2Ali = 0;
+      Printf("%d bins Ali, %d bins O2", hAli->GetNbinsX(), hO2->GetNbinsX());
       Printf("%f underflow Ali, %f underflow O2, %f overflow Ali, %f overflow O2", hAli->GetBinContent(0), hO2->GetBinContent(0),
              hAli->GetBinContent(hAli->GetNbinsX()), hO2->GetBinContent(hO2->GetNbinsX()));
       Printf("Bin contents:");
-      for (int i = 0; i < hAli->GetNbinsX(); i++) {
+      int i = 0;
+      for (i; i <= hAli->GetNbinsX(); i++) {
         float binAli = hAli->GetBinContent(i);
         float binO2 = hO2->GetBinContent(i);
         diffO2Ali += binO2 - binAli;
         Printf("Ali: %f, O2: %f O2 - Ali: %f acc diff: %f ratio O2 / Ali: %f", binAli, binO2, binO2 - binAli, diffO2Ali, binO2 / binAli);
+      }
+      for (i; i <= hO2->GetNbinsX(); i++) {
+        float binO2 = hO2->GetBinContent(i);
+        Printf("O2: %f", binO2);
       }
 
       // Ratio
