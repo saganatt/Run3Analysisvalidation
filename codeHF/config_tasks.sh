@@ -444,7 +444,7 @@ EOF
 
 function MakeScriptAli {
   [ $DOO2_QA_EFF -eq 1 ] && {
-    ALIEXEC="root -b -q -l \"$DIR_TASKS/RunQAEffTaskLocal.C(\\\"\$FileIn\\\", $ISMC, \\\"\\\", \\\"pp\\\", kTRUE, \\\"\$DIR_TASKS/../TrackingEffPID_ESDTrackCuts.root\\\", \\\"AliESDtrackCuts\\\", -1)\""
+    ALIEXEC="root -b -q -l \"$DIR_TASKS/RunQAEffTaskLocal.C(\\\"\$FileIn\\\", $ISMC, \\\"\\\", \\\"pp\\\", kTRUE, \\\"$DIR_TASKS/../TrackingEffPID_ESDTrackCuts.root\\\", \\\"AliESDtrackCuts\\\", -1)\""
   }
   [ $DOO2_QA_EFF -eq 0 ] && {
     ALIEXEC="root -b -q -l \"$DIR_TASKS/RunHFTaskLocal.C(\\\"\$FileIn\\\", \\\"\$JSON\\\", $ISMC, $USEO2VERTEXER, $USEALIEVCUTS)\""
