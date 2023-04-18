@@ -244,6 +244,9 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   AddHistogram(vecHisQAEffRaw, "Raw track pt", "rawPt", "qa-efficiency/rawPt", 1, 0, 0);
   AddHistogram(vecHisQAEffRaw, "Raw track eta", "rawEta", "qa-efficiency/rawEta", 1, 0, 0);
   AddHistogram(vecHisQAEffRaw, "Raw track phi", "rawPhi", "qa-efficiency/rawPhi", 1, 0, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw particle pt", "rawMCPt", "qa-efficiency/rawMCPt", 1, 0, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw particle eta", "rawMCEta", "qa-efficiency/rawMCEta", 1, 0, 0);
+  AddHistogram(vecHisQAEffRaw, "Raw particle phi", "rawMCPhi", "qa-efficiency/rawMCPhi", 1, 0, 0);
 
   // vector of specifications of vectors: name, VecSpecHis, pads X, pads Y
   std::vector<std::tuple<TString, VecSpecHis, int, int>> vecSpecVecSpec;
@@ -284,7 +287,7 @@ Int_t Compare(TString fileO2 = "AnalysisResults_O2.root", TString fileAli = "Ana
   if (options.Contains(" qaeff ")) {
     vecSpecVecSpec.push_back(std::make_tuple("qaeff_gen", vecHisQAEffGen, 4, 2));
     vecSpecVecSpec.push_back(std::make_tuple("qaeff_reco", vecHisQAEffReco, 4, 4));
-    vecSpecVecSpec.push_back(std::make_tuple("qaeff_raw", vecHisQAEffRaw, 3, 1));
+    vecSpecVecSpec.push_back(std::make_tuple("qaeff_raw", vecHisQAEffRaw, 3, 2));
   }
 
   // Histogram plot vertical margins
