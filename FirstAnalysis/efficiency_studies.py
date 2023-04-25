@@ -7,6 +7,7 @@ author: Maja Kabus <mkabus@cern.ch>, CERN / Warsaw University of Technology
 """
 
 import argparse
+from array import array
 
 # pylint: disable=import-error,no-name-in-module
 from ROOT import (
@@ -52,21 +53,20 @@ def prepare_canvas(var, titles):
 
     def get_pt_hist():
         hempty = TH1F(
-            hname, f"{ctitle};Transverse Momentum (GeV/c);Efficiency", 16, 0.00, 16
-        )
+            hname, f"{ctitle};Transverse Momentum (GeV/c);Efficiency", 43, array('d', [0, 0.05, 0.075, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.225, 0.25, 0.30, 0.35, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1, 1.25, 1.5, 1.75, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7, 8, 10, 12, 16, 20, 30, 35]))
         # gPad.SetLogx()
         return hempty
 
     def get_eta_hist():
-        return TH1F(hname, f"{ctitle};Pseudorapidity;Efficiency", 16, -1.5, 1.5)
+        return TH1F(hname, f"{ctitle};Pseudorapidity;Efficiency", 12, -0.8 - 0.16, 0.8 + 0.16)
 
     def get_phi_hist():
         return TH1F(
             hname,
             f"{ctitle};Azimuthal angle (rad);Efficiency",
-            16,
-            -2 * 3.1416 - 0.5,
-            2 * 3.1416 + 0.5,
+            20,
+            0 - 6.28319 / 18,
+            6.28319 + 6.28319 / 18
         )
 
     hists = {"Pt": get_pt_hist, "Eta": get_eta_hist, "Phi": get_phi_hist}
@@ -89,7 +89,7 @@ def prepare_canvas(var, titles):
     latexa.SetTextSize(0.04)
     latexa.SetTextFont(42)
     latexa.SetTextAlign(3)
-    latexa.DrawLatexNDC(0.15, 0.3, "-0.9 #geq #eta #geq 0.9")
+    latexa.DrawLatexNDC(0.15, 0.3, "-0.8 #geq #eta #geq 0.8")
     latexa.DrawLatexNDC(0.15, 0.25, "-2#pi #geq #varphi #geq 2#pi")
 
     leg = TLegend(0.55, 0.15, 0.89, 0.35, "P")
@@ -106,10 +106,10 @@ def get_efficiency_all_charges(infile, det, var, had):
     """
     det_str = det.lower().replace("-", "_")
     prm_str = "" if var == "Phi" else "prm/"
-    num_pos = infile.Get(f"qa-efficiency/MC/{had}/pos/{var.lower()}/{prm_str}{det_str}")
-    num_neg = infile.Get(f"qa-efficiency/MC/{had}/neg/{var.lower()}/{prm_str}{det_str}")
-    den_pos = infile.Get(f"qa-efficiency/MC/{had}/pos/{var.lower()}/{prm_str}generated")
-    den_neg = infile.Get(f"qa-efficiency/MC/{had}/neg/{var.lower()}/{prm_str}generated")
+    num_pos = infile.Get(f"qa-efficiency/MC/{had}/pos_pdg/{var.lower()}/{prm_str}{det_str}")
+    num_neg = infile.Get(f"qa-efficiency/MC/{had}/neg_pdg/{var.lower()}/{prm_str}{det_str}")
+    den_pos = infile.Get(f"qa-efficiency/MC/{had}/pos_pdg/{var.lower()}/{prm_str}generated")
+    den_neg = infile.Get(f"qa-efficiency/MC/{had}/neg_pdg/{var.lower()}/{prm_str}generated")
     num = num_pos.Clone()
     num.Add(num_neg)
     den = den_pos.Clone()
@@ -173,7 +173,13 @@ def efficiency_tracking(
         if sign == "All":
             eff = get_efficiency_all_charges(infile, det, var, hhad)
         else:
-            eff = heff.FindObject(f"{sign} {had}").FindObject(eff_objs[var])
+            ssign = sign
+            if hhad == "el":
+                if sign == "Positive":
+                    ssign = "Negative"
+                else:
+                    ssign = "Positive"
+            eff = heff.FindObject(f"{ssign} PDG {had}").FindObject(eff_objs[var])
         c_all.cd()
         eff.Paint("p")
         graph = eff.GetPaintedGraph().Clone()
