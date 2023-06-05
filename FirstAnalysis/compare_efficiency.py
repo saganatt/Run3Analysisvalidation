@@ -87,8 +87,8 @@ def prepare_canvas(var, titles, single):
     latexa.SetTextSize(0.04)
     latexa.SetTextFont(42)
     latexa.SetTextAlign(3)
-    latexa.DrawLatexNDC(0.15, 0.3, "-0.9 #geq #eta #geq 0.9")
-    latexa.DrawLatexNDC(0.15, 0.25, "-2#pi #geq #varphi #geq 2#pi")
+    latexa.DrawLatexNDC(0.15, 0.3, "-0.8 #geq #eta #geq 0.8")
+    latexa.DrawLatexNDC(0.15, 0.25, "0 #geq #varphi #geq 2#pi")
 
     leg = TLegend(0.55, 0.15, 0.89, 0.25 if single else 0.35, "P")
     leg.SetNColumns(2)
