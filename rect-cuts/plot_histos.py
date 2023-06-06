@@ -47,8 +47,9 @@ def get_proj(hist, var, var_range, var_file, pt_range, sig_or_bkg):
     bin2 = hist.GetYaxis().FindBin(pt_range[1])
     h_proj = hist.ProjectionX(f"hproj_{sig_or_bkg}_{var_file}_"
                               f"pt_{pt_range[0]}-{pt_range[1]}", bin1, bin2)
+    h_proj.Scale(1. / h_proj.Integral()) # probability distribution, sum of content = 1.0
 
-    h_proj.SetTitle(f"{var} for {pt_range[0]} #leq #it{{p}}_{{T}} < {pt_range[1]}")
+    h_proj.SetTitle(f"Normalized {var} for {pt_range[0]} #leq #it{{p}}_{{T}} < {pt_range[1]}")
     h_proj.GetXaxis().SetRangeUser(var_range[0], var_range[1])
     if sig_or_bkg == "sig":
         h_proj.SetLineColor(1)
@@ -78,8 +79,8 @@ def plot(hist_sig, hist_bkg, var, var_range, pt_range):
 
     sig_h = get_proj(hist_sig, var, var_range, var_file, pt_range, "sig")
     bkg_h = get_proj(hist_bkg, var, var_range, var_file, pt_range, "bkg")
-    sig_h.Draw()
-    bkg_h.Draw("same")
+    sig_h.Draw("hist")
+    bkg_h.Draw("hist;same")
     legend = TLegend(0.50, 0.72, 0.70, 0.90)
     legend.AddEntry(sig_h, "signal", "L")
     legend.AddEntry(bkg_h, "background", "L")
@@ -100,17 +101,18 @@ def main():
 
     args = parser.parse_args()
 
-    pt_ranges = [1, 2, 4, 6, 8, 12, 24]
     all_settings = [{ "hist_path": "hf-task-lc/Data",
                   "hist_list": ["hDecLengthVsPt", "hDecLengthxyVsPt", "hCPAVsPt", "hCPAxyVsPt"],
                   "var_list": ["decay length", "decay length XY", "CPA", "CPA XY"],
-                  "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]]
+                  "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]],
+                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
                 },
                 { "hist_path": "hf-task-d0",
                   "hist_list": ["hDecLengthFinerBinning", "hDecLengthxyFinerBinning",
                                 "hCPAFinerBinning"],
                   "var_list": ["decay length", "decay length XY", "CPA"],
-                  "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]]
+                  "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]],
+                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
                 }]
     if args.part == "Lc":
         settings = all_settings[0]
@@ -125,8 +127,8 @@ def main():
         print(f'Getting histogram: {settings["hist_path"]}/{histname}')
         hist_sig = infile_sig.Get(f'{settings["hist_path"]}/{histname}')
         hist_bkg = infile_bkg.Get(f'{settings["hist_path"]}/{histname}')
-        for ind in range(len(pt_ranges) - 1):
-            pt_range = (pt_ranges[ind], pt_ranges[ind + 1])
+        for ind in range(len(settings["pt_ranges"]) - 1):
+            pt_range = (settings["pt_ranges"][ind], settings["pt_ranges"][ind + 1])
             plot(hist_sig, hist_bkg, var, var_range, pt_range)
 
 
