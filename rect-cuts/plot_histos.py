@@ -95,8 +95,8 @@ def main():
     """
     gROOT.SetBatch(True)
     parser = argparse.ArgumentParser(description="Arguments to pass")
-    parser.add_argument("sig_input_file", help="input signal AnalysisResults.root file")
-    parser.add_argument("bkg_input_file", help="input bacgkround AnalysisResults.root file")
+    parser.add_argument("sig_input_file", help="input signal AnalysisResults.root")
+    parser.add_argument("bkg_input_file", help="input background AnalysisResults.root")
     parser.add_argument("part", help="particle kind (Lc or D0)")
 
     args = parser.parse_args()
