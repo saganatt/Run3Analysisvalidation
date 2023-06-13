@@ -52,7 +52,7 @@ def prepare_hists(settings):
     return hists_sig, hists_bkg
 
 
-def fill_hists(settings, infile, hists, sig_or_bkg, outfile):
+def fill_hists(settings, infile, hists, sig_or_bkg, outfile): # pylint: disable=too-many-locals
     """
     Fill histograms from trees.
     """
@@ -102,11 +102,11 @@ def plot_single(h_sig, h_bkg, filename):
     h_bkg.Draw("hist;same")
     y_min = min(h_sig.GetMinimum(), h_bkg.GetMinimum())
     y_max = max(h_sig.GetMaximum(), h_bkg.GetMaximum())
-    margin = 0.1
+    margin = 0.05
     k = 1.0 - 2 * margin
     y_range = y_max - y_min
-    h_bkg.GetYaxis().SetRangeUser(y_min - margin / k * y_range,
-                                  y_max + margin / k * y_range)
+    h_sig.GetYaxis().SetRangeUser(0.0, y_max + margin / k * y_range)
+    h_bkg.GetYaxis().SetRangeUser(0.0, y_max + margin / k * y_range)
 
     legend = TLegend(0.50, 0.72, 0.70, 0.90)
     legend.AddEntry(h_sig, "signal", "L")
@@ -152,18 +152,19 @@ def main():
 
     args = parser.parse_args()
 
-    settings = { "var_list": ["decay length", "decay length XY", "CPA", "CPA XY"],
-                 "var_list_u": ["decay_length", "decay_length_XY", "CPA", "CPA_XY"],
-                 "leaf_list": ["fDecayLength", "fDecayLengthXY", "fCPA", "fCPAXY"],
-                 "var_ranges": [[100, 0.0, 0.1], [100, 0.0, 0.1], [100, 0.9, 1.], [100, 0.9, 1.]],
+    settings = { "var_list": ["decay length", "decay length XY", "CPA", "CPA XY", "Chi2PCA"],
+                 "var_list_u": ["decay_length", "decay_length_XY", "CPA", "CPA_XY", "Chi2PCA"],
+                 "leaf_list": ["fDecayLength", "fDecayLengthXY", "fCPA", "fCPAXY", "fChi2PCA"],
+                 "var_ranges": [[100, 0.0, 0.1], [100, 0.0, 0.1], [100, 0.9, 1.], [100, 0.9, 1.],
+                                [100, 0., 0.5]],
                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
                 }
 
-    outfile = TFile(args.outfile, "RECREATE")
-
     if args.plot_file:
+        outfile = TFile(args.outfile)
         plot_file(outfile, settings)
     else:
+        outfile = TFile(args.outfile, "RECREATE")
         infile_sig = TFile(args.sig_input_file)
         infile_bkg = TFile(args.bkg_input_file)
 
@@ -176,6 +177,11 @@ def main():
         print("Filled histos for background")
 
         plot(hists_sig, hists_bkg, settings)
+
+        infile_sig.Close()
+        infile_bkg.Close()
+
+    outfile.Close()
 
 
 if __name__ == "__main__":
