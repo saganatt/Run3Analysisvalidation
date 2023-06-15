@@ -156,7 +156,7 @@ def main():
                  "var_list_u": ["decay_length", "decay_length_XY", "CPA", "CPA_XY", "Chi2PCA"],
                  "leaf_list": ["fDecayLength", "fDecayLengthXY", "fCPA", "fCPAXY", "fChi2PCA"],
                  "var_ranges": [[100, 0.0, 0.1], [100, 0.0, 0.1], [100, 0.9, 1.], [100, 0.9, 1.],
-                                [100, 0., 0.5]],
+                                [200, 0., 0.01]],
                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
                 }
 
