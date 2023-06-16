@@ -13,6 +13,8 @@ from array import array
 from ROOT import (
     TCanvas,
     TFile,
+    TTree,
+    TList,
     TLegend,
     TH1F,
     gROOT,
@@ -57,10 +59,15 @@ def fill_hists(settings, infile, hists, sig_or_bkg, outfile): # pylint: disable=
     Fill histograms from trees.
     """
     tree_name = "O2hfcand3pfull"
+    #tree_list = TList()
+    count = 0
     for key in infile.GetListOfKeys(): # pylint: disable=too-many-nested-blocks
         key_name = key.GetName()
         if key_name.startswith("DF_"): # is the dataframe directory
             tree = infile.Get(f"{key_name}/{tree_name}")
+            #tree.SetName(f"merged_{sig_or_bkg}")
+            #tree_list.Add(tree)
+            #count = count + 1
             pt_val = array("f", [ 0. ])
             tree.SetBranchAddress("fPt", pt_val)
             mc_flag = array("b", [ 0 ])
@@ -78,8 +85,28 @@ def fill_hists(settings, infile, hists, sig_or_bkg, outfile): # pylint: disable=
                             for var in var_leaves:
                                 hists[var][j].Fill(var_leaves[var][0])
                             break
-    for var in settings["var_list"]:
+            #if count == 5:
+            #    break
+    #tree_count = tree_list.GetEntries()
+    #print(f"Merging {tree_count} trees")
+    #out_tree = TTree.MergeTrees(tree_list)
+    #outfile.cd()
+    #print("Writing the merged tree")
+    #out_tree.Write()
+
+    #def cond(i):
+    #    #return f'(("{sig_or_bkg}" == "sig"&& (fMCflag == 2 || fMCflag == -2)) ' \
+    #    #            f'|| ("{sig_or_bkg}" == "bkg" && fMCflag == 0)) ' \
+    #    return f'({settings["pt_ranges"][i]} <= fPt < {settings["pt_ranges"][i+1]})'
+    for var, leaf in zip(settings["var_list"], settings["leaf_list"]):
         for i in range(len(settings["pt_ranges"]) - 1):
+            #print(f'Plotting tree for {var} {settings["pt_ranges"][i]}')
+            #cond_i = cond(i)
+            #print(f"cond: {cond_i}")
+            #cur_hist = hists[var][i].GetName()
+            #tree_line = f"{leaf}>>+{cur_hist}"
+            #print(f"Plotting {tree_line}")
+            #out_tree.Draw(tree_line, cond(i))
             outfile.WriteObject(hists[var][i], hists[var][i].GetName())
 
 
@@ -152,11 +179,14 @@ def main():
 
     args = parser.parse_args()
 
-    settings = { "var_list": ["decay length", "decay length XY", "CPA", "CPA XY", "Chi2PCA"],
-                 "var_list_u": ["decay_length", "decay_length_XY", "CPA", "CPA_XY", "Chi2PCA"],
-                 "leaf_list": ["fDecayLength", "fDecayLengthXY", "fCPA", "fCPAXY", "fChi2PCA"],
+    settings = { "var_list": ["decay length", "decay length XY", "CPA", "CPA XY",
+                              "Chi2PCA", "mass"],
+                 "var_list_u": ["decay_length", "decay_length_XY", "CPA", "CPA_XY",
+                                "Chi2PCA", "mass"],
+                 "leaf_list": ["fDecayLength", "fDecayLengthXY", "fCPA", "fCPAXY",
+                               "fChi2PCA", "fM"],
                  "var_ranges": [[100, 0.0, 0.1], [100, 0.0, 0.1], [100, 0.9, 1.], [100, 0.9, 1.],
-                                [200, 0., 0.01]],
+                                [200, 0., 0.01], [600, 1.98, 2.58]],
                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
                 }
 
@@ -164,13 +194,13 @@ def main():
         outfile = TFile(args.outfile)
         plot_file(outfile, settings)
     else:
-        outfile = TFile(args.outfile, "RECREATE")
         infile_sig = TFile(args.sig_input_file)
         infile_bkg = TFile(args.bkg_input_file)
 
         hists_sig, hists_bkg = prepare_hists(settings)
 
         print("Filling histos")
+        outfile = TFile(args.outfile, "RECREATE")
         fill_hists(settings, infile_sig, hists_sig, "sig", outfile)
         print("Filled histos for signal")
         fill_hists(settings, infile_bkg, hists_bkg, "bkg", outfile)
