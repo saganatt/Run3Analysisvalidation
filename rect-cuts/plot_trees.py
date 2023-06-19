@@ -76,12 +76,11 @@ def fill_hists(settings, settings_pt, infile, hists, hists_pt, sig_or_bkg, outfi
             #tree.SetName(f"merged_{sig_or_bkg}")
             #tree_list.Add(tree)
             #count = count + 1
-            pt_val = array("f", [ 0. ])
-            tree.SetBranchAddress("fPt", pt_val)
             mc_flag = array("b", [ 0 ])
             tree.SetBranchAddress("fMCflag", mc_flag)
             var_leaves = { var: array("f", [0.]) for var in settings["var_list"] }
             var_leaves_pt = { var: array("f", [0.]) for var in settings_pt["var_list"] }
+            pt_val = var_leaves_pt["pt"]
             for var, leaf in zip(settings["var_list"], settings["leaf_list"]):
                 tree.SetBranchAddress(leaf, var_leaves[var])
             for var, leaf in zip(settings_pt["var_list"], settings_pt["leaf_list"]):
@@ -133,7 +132,9 @@ def plot_single(h_sig, h_bkg, filename):
     canv.cd()
     canv.SetGridx()
     canv.SetGridy()
-
+    sig_entries = h_sig.GetEntries()
+    bkg_entries = h_bkg.GetEntries()
+    print(f"Sig histogram for {filename} counts: {sig_entries} bkg: {bkg_entries}")
     int_sig = h_sig.Integral()
     int_bkg = h_bkg.Integral()
     if int_sig != 0.0:
@@ -227,7 +228,7 @@ def main():
                                "fImpactParameter0", "fImpactParameter1", "fImpactParameter2"],
                  "var_ranges": [[100, 0.0, 0.1], [100, 0.0, 0.1], [100, 0.9, 1.], [100, 0.9, 1.],
                                 [200, 0., 0.01], [600, 1.98, 2.58],
-                                [100, -0.1, 0.1], [100, -0.1, 0.1], [100, -0.1, 0.1]],
+                                [100, -0.04, 0.04], [100, -0.04, 0.04], [100, -0.04, 0.04]],
                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
                 }
     settings_pt = { "var_list": ["pt", "pt prong0", "pt prong1", "pt prong2"],
