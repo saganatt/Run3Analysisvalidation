@@ -85,6 +85,8 @@ def plot_single(hists, c_name):
     legend.AddEntry(hists["bkg"], "background", "L")
     legend.Draw()
 
+    hists["sig"].Write()
+    hists["bkg"].Write()
     save_canvas(canv, c_name)
 
 
@@ -104,10 +106,6 @@ def plot_hists(settings, pt_ranges, trees):
         if var.startswith("pt"):
             plot_single(hists, settings_var[0])
         else:
-            for i in range(hists["sig"].GetYaxis().GetNbins()):
-                blow = hists["sig"].GetYaxis().GetBinLowEdge(i)
-                bup = hists["sig"].GetYaxis().GetBinUpEdge(i)
-                print(f"Bin {i} edges: {blow} {bup}")
             for i in range(len(pt_ranges) - 1):
                 histname = f"{settings_var[0]}_pt_{pt_ranges[i]}-{pt_ranges[i + 1]}"
                 hist_title = f"Normalized {var} for {pt_ranges[i]}" \
@@ -115,7 +113,6 @@ def plot_hists(settings, pt_ranges, trees):
                 projs = {}
                 for sig_or_bkg in ("sig", "bkg"):
                     ind = hists[sig_or_bkg].GetYaxis().FindBin(pt_ranges[i])
-                    print(f"pt range: {i} bin {sig_or_bkg}: {ind}")
                     projs[sig_or_bkg] = hists[sig_or_bkg].ProjectionX(f"h_{sig_or_bkg}_{histname}",
                                                                       ind, ind + 1)
                     projs[sig_or_bkg].SetTitle(hist_title)
@@ -134,6 +131,7 @@ def main():
     parser = argparse.ArgumentParser(description="Arguments to pass")
     parser.add_argument("sig_input_file", help="input signal tree AnalysisResults_tree.root file")
     parser.add_argument("bkg_input_file", help="input bkg tree AnalysisResults_tree.root file")
+    parser.add_argument("output_file", help="output histograms file")
 
     args = parser.parse_args()
 
@@ -158,6 +156,7 @@ def main():
 
     infile_sig = TFile(args.sig_input_file)
     infile_bkg = TFile(args.bkg_input_file)
+    outfile = TFile(args.output_file, "RECREATE") # pylint: disable=unused-variable
 
     trees = {}
     trees["sig"] = infile_sig.Get("DF_0/O2hfcand3pfull")
