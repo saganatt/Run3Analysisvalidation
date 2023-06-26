@@ -51,7 +51,7 @@ def plot_tree_single(tree, settings_var, hist_title, sig_or_bkg, htype):
         tree.Draw(f"fPt:{settings_var[1]}>>{histname}", tree_cond[sig_or_bkg])
 
     int_hist = hist.Integral()
-    if int_hist != 0.0:
+    if int_hist != 0.0 and settings_var[1] != "fM":
         hist.Scale(1. / int_hist) # probability distribution, sum of content = 1.0
 
     return hist
@@ -97,19 +97,21 @@ def plot_hists(settings, pt_ranges, trees):
 
     for var, settings_var in settings.items():
         hists = {}
-        htype = "TH1F" if var.startswith("pt") else "TH2F"
+        htype = "TH1F" if "#it{p}_{T}" in var else "TH2F"
         for sig_or_bkg in ("sig", "bkg"):
             hists[sig_or_bkg] = plot_tree_single(trees[sig_or_bkg], settings_var,
                                                  f"Normalized {var}", sig_or_bkg,
                                                  htype)
 
-        if var.startswith("pt"):
+        if htype == "TH1F":
             plot_single(hists, settings_var[0])
         else:
             for i in range(len(pt_ranges) - 1):
                 histname = f"{settings_var[0]}_pt_{pt_ranges[i]}-{pt_ranges[i + 1]}"
-                hist_title = f"Normalized {var} for {pt_ranges[i]}" \
+                hist_title = f"{var} for {pt_ranges[i]}" \
                              f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}"
+                if var != "mass":
+                    hist_title = f"Normalized {hist_title}"
                 projs = {}
                 for sig_or_bkg in ("sig", "bkg"):
                     ind = hists[sig_or_bkg].GetYaxis().FindBin(pt_ranges[i])
@@ -147,10 +149,10 @@ def main():
                                         [100, -0.02, 0.02]),
                  "impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
                                         [100, -0.02, 0.02]),
-                 "pt": ("pt", "fPt", [200, 0, 24]),
-                 "pt prong0": ("pt_prong0", "fPtProng0", [200, 0, 24]),
-                 "pt prong1": ("pt_prong1", "fPtProng1", [200, 0, 24]),
-                 "pt prong2": ("pt_prong2", "fPtProng2", [200, 0, 24])
+                 "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
+                 "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
+                 "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
+                 "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
                 }
     pt_ranges = [0, 1, 2, 4, 6, 8, 12, 24]
 
