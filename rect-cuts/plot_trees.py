@@ -131,7 +131,7 @@ def plot_hists(settings, pt_ranges, trees):
                 for sig_or_bkg in ("sig", "bkg"):
                     ind = hists[sig_or_bkg].GetYaxis().FindBin(pt_ranges[i])
                     projs[sig_or_bkg] = hists[sig_or_bkg].ProjectionX(f"h_{sig_or_bkg}_{histname}",
-                                                                      ind, ind + 1)
+                                                                      ind, ind)
                     projs[sig_or_bkg].SetTitle(hist_title)
 
                 plot_single(projs, histname)
