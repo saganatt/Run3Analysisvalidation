@@ -90,6 +90,23 @@ def plot_single(hists, c_name):
     save_canvas(canv, c_name)
 
 
+def plot_total_mass(hists_mass, c_name, hist_title):
+    """
+    Plot total mass from signal MC for mass fitter.
+    """
+    canv = TCanvas(f"c_{c_name}", c_name, 800, 600)
+    canv.cd()
+    canv.SetGridx()
+    canv.SetGridy()
+
+    mass_total = hists_mass["sig"].Clone(f"h_{c_name}")
+    mass_total.Add(hists_mass["bkg"])
+    mass_total.SetTitle(hist_title)
+    mass_total.Draw()
+    mass_total.Write()
+    save_canvas(canv, c_name)
+
+
 def plot_hists(settings, pt_ranges, trees):
     """
     Plot histograms from trees.
@@ -108,10 +125,8 @@ def plot_hists(settings, pt_ranges, trees):
         else:
             for i in range(len(pt_ranges) - 1):
                 histname = f"{settings_var[0]}_pt_{pt_ranges[i]}-{pt_ranges[i + 1]}"
-                hist_title = f"{var} for {pt_ranges[i]}" \
+                hist_title = f"Normalized {var} for {pt_ranges[i]}" \
                              f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}"
-                if var != "mass":
-                    hist_title = f"Normalized {hist_title}"
                 projs = {}
                 for sig_or_bkg in ("sig", "bkg"):
                     ind = hists[sig_or_bkg].GetYaxis().FindBin(pt_ranges[i])
@@ -120,6 +135,11 @@ def plot_hists(settings, pt_ranges, trees):
                     projs[sig_or_bkg].SetTitle(hist_title)
 
                 plot_single(projs, histname)
+
+                if var == "mass":
+                    hist_title = f"Total mass for {pt_ranges[i]}" \
+                                 f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}"
+                    plot_total_mass(projs, f"total_{histname}", hist_title)
 
 
 def main():
