@@ -176,7 +176,7 @@ def main():
                  #"#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
                  #"#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
                 }
-    pt_ranges = [1, 24]
+    pt_ranges = [2, 24]
 
     infile_sig = TFile(args.sig_input_file)
     infile_bkg = TFile(args.bkg_input_file)
