@@ -79,6 +79,8 @@ def plot_single(hists, c_name):
     y_range = y_max - y_min
     hists["sig"].GetYaxis().SetRangeUser(0.0, y_max + margin / k * y_range)
     hists["bkg"].GetYaxis().SetRangeUser(0.0, y_max + margin / k * y_range)
+    hists["sig"].GetYaxis().SetTitle("Normalized counts")
+    hists["bkg"].GetYaxis().SetTitle("Normalized counts")
 
     legend = TLegend(0.50, 0.72, 0.70, 0.90)
     legend.AddEntry(hists["sig"], "signal", "L")
@@ -125,7 +127,7 @@ def plot_hists(settings, pt_ranges, trees):
         else:
             for i in range(len(pt_ranges) - 1):
                 histname = f"{settings_var[0]}_pt_{pt_ranges[i]}-{pt_ranges[i + 1]}"
-                hist_title = f"Normalized {var} for {pt_ranges[i]}" \
+                hist_title = f"{var} for {pt_ranges[i]}" \
                              f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}"
                 projs = {}
                 for sig_or_bkg in ("sig", "bkg"):
@@ -159,24 +161,24 @@ def main():
 
     args = parser.parse_args()
 
-    settings = { #"decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
-                 #"decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
-                 #"CPA": ("CPA", "fCPA", [100, 0.9, 1.0]),
-                 #"CPA XY": ("CPA_XY", "fCPAXY", [100, 0.9, 1.0]),
-                 #"Chi2PCA": ("Chi2PCA", "fChi2PCA", [200, 0.0, 0.01]),
-                 "mass": ("mass", "fM", [600, 2.18, 2.38])#,
-                 #"impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
-                 #                       [100, -0.02, 0.02]),
-                 #"impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
-                 #                       [100, -0.02, 0.02]),
-                 #"impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
-                 #                       [100, -0.02, 0.02]),
-                 #"#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
-                 #"#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
-                 #"#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
-                 #"#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
+    settings = { "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
+                 "decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
+                 "CPA": ("CPA", "fCPA", [100, 0.9, 1.0]),
+                 "CPA XY": ("CPA_XY", "fCPAXY", [100, 0.9, 1.0]),
+                 "Chi2PCA": ("Chi2PCA", "fChi2PCA", [200, 0.0, 0.01]),
+                 "mass": ("mass", "fM", [600, 2.18, 2.38]),
+                 "impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
+                                        [100, -0.02, 0.02]),
+                 "impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
+                                        [100, -0.02, 0.02]),
+                 "impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
+                                        [100, -0.02, 0.02]),
+                 "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
+                 "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
+                 "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
+                 "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
                 }
-    pt_ranges = [2, 24]
+    pt_ranges = [2, 4]
 
     infile_sig = TFile(args.sig_input_file)
     infile_bkg = TFile(args.bkg_input_file)
