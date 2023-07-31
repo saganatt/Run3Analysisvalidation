@@ -161,24 +161,24 @@ def main():
 
     args = parser.parse_args()
 
-    settings = { "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
-                 "decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
-                 "CPA": ("CPA", "fCPA", [100, 0.9, 1.0]),
-                 "CPA XY": ("CPA_XY", "fCPAXY", [100, 0.9, 1.0]),
-                 "Chi2PCA": ("Chi2PCA", "fChi2PCA", [200, 0.0, 0.01]),
-                 "mass": ("mass", "fM", [600, 2.18, 2.38]),
-                 "impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
-                                        [100, -0.02, 0.02]),
-                 "impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
-                                        [100, -0.02, 0.02]),
-                 "impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
-                                        [100, -0.02, 0.02]),
-                 "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
-                 "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
-                 "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
-                 "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
+    settings = { #"decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
+                 #"decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
+                 #"CPA": ("CPA", "fCPA", [100, 0.9, 1.0]),
+                 #"CPA XY": ("CPA_XY", "fCPAXY", [100, 0.9, 1.0]),
+                 #"Chi2PCA": ("Chi2PCA", "fChi2PCA", [200, 0.0, 0.01]),
+                 "mass": ("mass", "fM", [600, 2.18, 2.38])
+                 #"impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
+                 #                       [100, -0.02, 0.02]),
+                 #"impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
+                 #                       [100, -0.02, 0.02]),
+                 #"impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
+                 #                       [100, -0.02, 0.02]),
+                 #"#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
+                 #"#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
+                 #"#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
+                 #"#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
                 }
-    pt_ranges = [2, 4]
+    pt_ranges = [1, 2, 4, 6, 8, 12, 24]
 
     infile_sig = TFile(args.sig_input_file)
     infile_bkg = TFile(args.bkg_input_file)
