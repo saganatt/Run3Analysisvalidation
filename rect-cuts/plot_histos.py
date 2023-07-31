@@ -9,13 +9,7 @@ author: Maja Kabus <mkabus@cern.ch>, CERN / Warsaw University of Technology
 import argparse
 
 # pylint: disable=import-error,no-name-in-module
-from ROOT import (
-    TCanvas,
-    TFile,
-    TLegend,
-    gROOT,
-    gStyle,
-)
+from ROOT import TCanvas, TFile, TLegend, gROOT, gStyle
 
 
 def save_canvas(canvas, title):
@@ -45,28 +39,33 @@ def get_proj(hist, var, var_range, var_file, pt_range, sig_or_bkg):
     """
     bin1 = hist.GetYaxis().FindBin(pt_range[0])
     bin2 = hist.GetYaxis().FindBin(pt_range[1])
-    h_proj = hist.ProjectionX(f"hproj_{sig_or_bkg}_{var_file}_"
-                              f"pt_{pt_range[0]}-{pt_range[1]}", bin1, bin2)
-    h_proj.Scale(1. / h_proj.Integral()) # probability distribution, sum of content = 1.0
+    h_proj = hist.ProjectionX(
+        f"hproj_{sig_or_bkg}_{var_file}_" f"pt_{pt_range[0]}-{pt_range[1]}", bin1, bin2
+    )
+    h_proj.Scale(
+        1.0 / h_proj.Integral()
+    )  # probability distribution, sum of content = 1.0
 
-    h_proj.SetTitle(f"Normalized {var} for {pt_range[0]} #leq #it{{p}}_{{T}} < {pt_range[1]}")
+    h_proj.SetTitle(
+        f"Normalized {var} for {pt_range[0]} #leq #it{{p}}_{{T}} < {pt_range[1]}"
+    )
     h_proj.GetXaxis().SetRangeUser(var_range[0], var_range[1])
     if sig_or_bkg == "sig":
         h_proj.SetLineColor(1)
     else:
         h_proj.SetLineColor(2)
-    #hist.GetYaxis().CenterTitle()
-    #hist.GetXaxis().CenterTitle()
-    #hist.GetXaxis().SetNoExponent()
+    # hist.GetYaxis().CenterTitle()
+    # hist.GetXaxis().CenterTitle()
+    # hist.GetXaxis().SetNoExponent()
     gStyle.SetOptStat(0)
     gStyle.SetFrameLineWidth(2)
-    #gStyle.SetTitleSize(0.045, "x")
-    #gStyle.SetTitleSize(0.045, "y")
-    #gStyle.SetMarkerSize(1)
-    #gStyle.SetLabelOffset(0.015, "x")
-    #gStyle.SetLabelOffset(0.02, "y")
-    #gStyle.SetTitleOffset(1.1, "x")
-    #gStyle.SetTitleOffset(1.0, "y")
+    # gStyle.SetTitleSize(0.045, "x")
+    # gStyle.SetTitleSize(0.045, "y")
+    # gStyle.SetMarkerSize(1)
+    # gStyle.SetLabelOffset(0.015, "x")
+    # gStyle.SetLabelOffset(0.02, "y")
+    # gStyle.SetTitleOffset(1.1, "x")
+    # gStyle.SetTitleOffset(1.0, "y")
     return h_proj
 
 
@@ -101,19 +100,31 @@ def main():
 
     args = parser.parse_args()
 
-    all_settings = [{ "hist_path": "hf-task-lc/Data",
-                  "hist_list": ["hDecLengthVsPt", "hDecLengthxyVsPt", "hCPAVsPt", "hCPAxyVsPt"],
-                  "var_list": ["decay length", "decay length XY", "CPA", "CPA XY"],
-                  "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]],
-                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
-                },
-                { "hist_path": "hf-task-d0",
-                  "hist_list": ["hDecLengthFinerBinning", "hDecLengthxyFinerBinning",
-                                "hCPAFinerBinning"],
-                  "var_list": ["decay length", "decay length XY", "CPA"],
-                  "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]],
-                  "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24]
-                }]
+    all_settings = [
+        {
+            "hist_path": "hf-task-lc/Data",
+            "hist_list": [
+                "hDecLengthVsPt",
+                "hDecLengthxyVsPt",
+                "hCPAVsPt",
+                "hCPAxyVsPt",
+            ],
+            "var_list": ["decay length", "decay length XY", "CPA", "CPA XY"],
+            "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]],
+            "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24],
+        },
+        {
+            "hist_path": "hf-task-d0",
+            "hist_list": [
+                "hDecLengthFinerBinning",
+                "hDecLengthxyFinerBinning",
+                "hCPAFinerBinning",
+            ],
+            "var_list": ["decay length", "decay length XY", "CPA"],
+            "var_ranges": [[-0.05, 0.45], [-0.05, 0.45], [0.45, 1.05], [0.45, 1.05]],
+            "pt_ranges": [0, 1, 2, 4, 6, 8, 12, 24],
+        },
+    ]
     if args.part == "Lc":
         settings = all_settings[0]
     else:
@@ -122,8 +133,9 @@ def main():
     infile_sig = TFile(args.sig_input_file)
     infile_bkg = TFile(args.bkg_input_file)
 
-    for histname, var, var_range in \
-            zip(settings["hist_list"], settings["var_list"], settings["var_ranges"]):
+    for histname, var, var_range in zip(
+        settings["hist_list"], settings["var_list"], settings["var_ranges"]
+    ):
         print(f'Getting histogram: {settings["hist_path"]}/{histname}')
         hist_sig = infile_sig.Get(f'{settings["hist_path"]}/{histname}')
         hist_bkg = infile_bkg.Get(f'{settings["hist_path"]}/{histname}')
