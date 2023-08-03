@@ -37,7 +37,7 @@ def plot_tree_single(tree, settings_var, hist_title, sig_or_bkg, htype):
     """
     hist_color = { "sig": 1, "bkg": 2}
     # mc_flag == 1 << DecayType::LcToPKPi, decay type == 1
-    tree_cond = { "sig": "(fMCflag == 2 || fMCflag == -2)", "bkg": "fMCflag == 0" }
+    tree_cond = { "sig": "(fFlagMc == 2 || fFlagMc == -2)", "bkg": "fFlagMc == 0" }
 
     histname = f"h_{sig_or_bkg}_{settings_var[0]}"
     if htype == "TH1F":
@@ -133,7 +133,6 @@ def plot_hists(settings, pt_ranges, trees):
                 for sig_or_bkg in ("sig", "bkg"):
                     ind = hists[sig_or_bkg].GetYaxis().FindBin(pt_ranges[i])
                     ind2 = hists[sig_or_bkg].GetYaxis().FindBin(pt_ranges[i + 1] - 0.05)
-                    print(f"Bins: {ind} {ind2}")
                     projs[sig_or_bkg] = hists[sig_or_bkg].ProjectionX(f"h_{sig_or_bkg}_{histname}",
                                                                       ind, ind2)
                     projs[sig_or_bkg].SetTitle(hist_title)
