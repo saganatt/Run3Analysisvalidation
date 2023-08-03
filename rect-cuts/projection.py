@@ -12,6 +12,8 @@ import json
 
 from ROOT import TFile, gROOT # pylint: disable=import-error
 
+task_bin_edges = [-1, 0, 1, 2, 4, 6, 8, 12, 24] # -1 is dummy to mark the underflow bin
+
 def main():
     """
     Main
@@ -38,11 +40,21 @@ def main():
 
     fout = TFile(args.outfile, "RECREATE")
 
-    for ind, (binmin, binmax) in enumerate(zip(pt_min, pt_max)):
+    ind = 0
+    nbins = len(task_bin_edges)
+    for binmin, binmax in zip(pt_min, pt_max):
         print(f"Processing pT bin: [{binmin}, {binmax})")
         hname = f"proj_{binmin}-{binmax}"
+        while ind < nbins and task_bin_edges[ind] < binmin + 0.001:
+            ind += 1
+        minind = ind - 1
+        while ind < nbins and task_bin_edges[ind] < binmax - 0.001:
+            ind += 1
+        maxind = ind - 1
+        if maxind > nbins - 2 or minind > nbins - 2:
+            raise ValueError(f"Requested range [{pt_min}, {pt_max}) outside task maximum {task_bin_edges[-1]}")
 
-        h_proj = hist.ProjectionX(hname, ind + 1, ind + 2)
+        h_proj = hist.ProjectionX(hname, minind, maxind)
         #hMassProj.GetYaxis().SetRangeUser(0, 30000)
 
         h_proj.Write()
