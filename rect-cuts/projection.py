@@ -10,9 +10,10 @@ author: Maja Kabus <mkabus@cern.ch>, CERN / Warsaw University of Technology
 import argparse
 import json
 
-from ROOT import TFile, gROOT # pylint: disable=import-error
+from ROOT import TFile, gROOT  # pylint: disable=import-error
 
-task_bin_edges = [-1, 0, 1, 2, 4, 6, 8, 12, 24] # -1 is dummy to mark the underflow bin
+task_bin_edges = [-1, 0, 1, 2, 4, 6, 8, 12, 24]  # -1 is dummy to mark the underflow bin
+
 
 def main():
     """
@@ -24,7 +25,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("infile", type=str, help="Input file")
     parser.add_argument("histpath", type=str, help="Path to histogram to project")
-    parser.add_argument("fitter_config_file", type=str, help="Mass fitter JSON config file")
+    parser.add_argument(
+        "fitter_config_file", type=str, help="Mass fitter JSON config file"
+    )
     parser.add_argument("outfile", type=str, help="Output file")
     args = parser.parse_args()
 
@@ -52,14 +55,17 @@ def main():
             ind += 1
         maxind = ind - 1
         if maxind > nbins - 2 or minind > nbins - 2:
-            raise ValueError(f"Requested range [{pt_min}, {pt_max}) outside task maximum {task_bin_edges[-1]}")
+            raise ValueError(
+                f"Requested range [{pt_min}, {pt_max}) outside task maximum {task_bin_edges[-1]}"
+            )
 
         h_proj = hist.ProjectionX(hname, minind, maxind)
-        #hMassProj.GetYaxis().SetRangeUser(0, 30000)
+        # hMassProj.GetYaxis().SetRangeUser(0, 30000)
 
         h_proj.Write()
 
     fout.Close()
+
 
 if __name__ == "__main__":
     main()
