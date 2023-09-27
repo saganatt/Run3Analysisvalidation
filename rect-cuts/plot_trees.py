@@ -37,7 +37,8 @@ def plot_tree_single(tree, settings_var, hist_title, sig_or_bkg, htype):
     """
     hist_color = { "sig": 1, "bkg": 2}
     # mc_flag == 1 << DecayType::LcToPKPi, decay type == 1
-    tree_cond = { "sig": "(fFlagMc == 2 || fFlagMc == -2)", "bkg": "fFlagMc == 0" }
+    tree_cond = { "sig": "fM > 2.226 && fM < 2.346", "bkg": "fFlagMc == 0",
+                  "sig_mc": "(fFlagMc == 2 || fFlagMc == -2)"}
 
     histname = f"h_{sig_or_bkg}_{settings_var[0]}"
     if htype == "TH1F":
@@ -72,6 +73,7 @@ def plot_single(hists, c_name):
     sig_entries = hists["sig"].GetEntries()
     bkg_entries = hists["bkg"].GetEntries()
     print(f"Sig histogram for {c_name} counts: {sig_entries} bkg: {bkg_entries}")
+
     hists["sig"].Draw("hist")
     hists["bkg"].Draw("hist;same")
     y_min = min(hists["sig"].GetMinimum(), hists["bkg"].GetMinimum())
@@ -83,8 +85,8 @@ def plot_single(hists, c_name):
     hists["bkg"].GetYaxis().SetTitle("Normalized counts")
 
     legend = TLegend(0.50, 0.72, 0.70, 0.90)
-    legend.AddEntry(hists["sig"], "signal", "L")
-    legend.AddEntry(hists["bkg"], "background", "L")
+    legend.AddEntry(hists["sig"], "LHC22o bkg", "L")
+    legend.AddEntry(hists["bkg"], "LHC21k6 bkg", "L")
     legend.Draw()
 
     hists["sig"].Write()
@@ -102,7 +104,7 @@ def plot_total_mass(hists_mass, c_name, hist_title):
     canv.SetGridy()
 
     mass_total = hists_mass["sig"].Clone(f"h_{c_name}")
-    mass_total.Add(hists_mass["bkg"])
+    #mass_total.Add(hists_mass["bkg"])
     mass_total.SetTitle(hist_title)
     mass_total.Draw()
     mass_total.Write()
@@ -160,12 +162,13 @@ def main():
 
     args = parser.parse_args()
 
-    settings = { "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
+    settings = { "mass": ("mass", "fM", [600, 2.18, 2.38]),
+                 "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
+
                  "decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
                  "CPA": ("CPA", "fCpa", [100, 0.9, 1.0]),
                  "CPA XY": ("CPA_XY", "fCpaXY", [100, 0.9, 1.0]),
-                 "Chi2PCA": ("Chi2PCA", "fChi2PCA", [200, 0.0, 0.01]),
-                 "mass": ("mass", "fM", [600, 2.18, 2.38]),
+                 "Chi2PCA": ("Chi2PCA", "fChi2PCA", [400, 0.0, 2.0]),
                  "impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
                                         [100, -0.02, 0.02]),
                  "impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
