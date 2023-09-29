@@ -37,7 +37,7 @@ def plot_tree_single(tree, settings_var, hist_title, sig_or_bkg, htype):
     """
     hist_color = { "sig": 1, "bkg": 2}
     # mc_flag == 1 << DecayType::LcToPKPi, decay type == 1
-    tree_cond = { "sig": "fM > 2.226 && fM < 2.346", "bkg": "fFlagMc == 0",
+    tree_cond = { "sig": "fM > 2.226 && fM < 2.346" if settings_var[1] != "fM" else "", "bkg": "fFlagMc == 0",
                   "sig_mc": "(fFlagMc == 2 || fFlagMc == -2)"}
 
     histname = f"h_{sig_or_bkg}_{settings_var[0]}"
@@ -86,7 +86,7 @@ def plot_single(hists, c_name):
 
     legend = TLegend(0.50, 0.72, 0.70, 0.90)
     legend.AddEntry(hists["sig"], "LHC22o bkg", "L")
-    legend.AddEntry(hists["bkg"], "LHC21k6 bkg", "L")
+    legend.AddEntry(hists["bkg"], "LHC23f4b2 bkg", "L")
     legend.Draw()
 
     hists["sig"].Write()
@@ -188,7 +188,7 @@ def main():
 
     trees = {}
     trees["sig"] = infile_sig.Get("DF_0/O2hfcandlcfull")
-    trees["bkg"] = infile_bkg.Get("DF_0/O2hfcandlcfull")
+    trees["bkg"] = infile_bkg.Get("DF0/O2hfcandlcfull")
 
     plot_hists(settings, pt_ranges, trees)
 
