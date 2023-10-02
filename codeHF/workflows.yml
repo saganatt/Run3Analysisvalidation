@@ -162,6 +162,10 @@ workflows:
       - o2-analysis-pid-bayes
     tables: HFSELLC
 
+  o2-analysis-hf-candidate-selector-lc-ml:
+    <<: *selector_3prong
+    tables: HFSELLC
+
   o2-analysis-hf-candidate-selector-xic-to-p-k-pi:
     <<: *selector_3prong
     tables: HFSELXIC

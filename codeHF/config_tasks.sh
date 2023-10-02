@@ -20,11 +20,11 @@
 # ENV_O2="alienv setenv O2Physics/latest-${BRANCH_O2}-o2 -c"
 
 # Steps
-DOCLEAN=1           # Delete created files (before and after running tasks).
-DOCONVERT=1         # Convert AliESDs.root to AO2D.root.
-DOALI=1             # Run AliPhysics tasks.
+DOCLEAN=0           # Delete created files (before and after running tasks).
+DOCONVERT=0         # Convert AliESDs.root to AO2D.root.
+DOALI=0             # Run AliPhysics tasks.
 DOO2=1              # Run O2 tasks.
-DOPOSTPROCESS=1     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
+DOPOSTPROCESS=0     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
 
 # Disable incompatible steps.
 [ "$INPUT_IS_O2" -eq 1 ] && { DOCONVERT=0; DOALI=0; }
@@ -48,7 +48,7 @@ DOO2_PID_TOF_QA=0   # pid-tof-qa-mc
 DOO2_PID_BAYES=0    # pid-bayes
 # Vertexing
 DOO2_SKIM=1         # hf-track-index-skim-creator
-DOO2_CAND_2PRONG=1  # hf-candidate-creator-2prong
+DOO2_CAND_2PRONG=0  # hf-candidate-creator-2prong
 DOO2_CAND_3PRONG=1  # hf-candidate-creator-3prong
 DOO2_CAND_CASC=0    # hf-candidate-creator-cascade
 DOO2_CAND_LB=0      # hf-candidate-creator-lb
@@ -63,6 +63,7 @@ DOO2_SEL_D0=0       # hf-candidate-selector-d0
 DOO2_SEL_DS=0       # hf-candidate-selector-ds-to-k-k-pi
 DOO2_SEL_DPLUS=0    # hf-candidate-selector-dplus-to-pi-k-pi
 DOO2_SEL_LC=0       # hf-candidate-selector-lc
+DOO2_SEL_LC_ML=0    # hf-candidate-selector-lc-ml
 DOO2_SEL_LB=0       # hf-candidate-selector-lb-to-lc-pi
 DOO2_SEL_XIC=0      # hf-candidate-selector-xic-to-p-k-pi
 DOO2_SEL_JPSI=0     # hf-candidate-selector-jpsi
@@ -73,7 +74,7 @@ DOO2_SEL_XICC=0     # hf-candidate-selector-xicc-to-p-k-pi-pi
 DOO2_SEL_B0=0       # hf-candidate-selector-b0-to-d-pi
 DOO2_SEL_BPLUS=0    # hf-candidate-selector-bplus-to-d0-pi
 # User tasks
-DOO2_TASK_D0=1      # hf-task-d0
+DOO2_TASK_D0=0      # hf-task-d0
 DOO2_TASK_DS=0      # hf-task-ds
 DOO2_TASK_DPLUS=0   # hf-task-dplus
 DOO2_TASK_LC=1      # hf-task-lc
@@ -120,7 +121,7 @@ DOO2_CONV_ZDC=1     # zdc-converter
 DOO2_CONV_BC=1      # bc-converter
 
 # Selection cuts
-APPLYCUTS_D0=1      # Apply D0 selection cuts.
+APPLYCUTS_D0=0      # Apply D0 selection cuts.
 APPLYCUTS_DS=0      # Apply Ds selection cuts.
 APPLYCUTS_DPLUS=0   # Apply D+ selection cuts.
 APPLYCUTS_LC=1      # Apply Λc selection cuts.
@@ -418,6 +419,7 @@ function MakeScriptO2 {
   [ $DOO2_SEL_DS -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-ds-to-k-k-pi"
   [ $DOO2_SEL_DPLUS -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-dplus-to-pi-k-pi"
   [ $DOO2_SEL_LC -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-lc"
+  [ $DOO2_SEL_LC_ML -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-lc-ml"
   [ $DOO2_SEL_LB -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-lb-to-lc-pi"
   [ $DOO2_SEL_XIC -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-xic-to-p-k-pi"
   [ $DOO2_SEL_X -eq 1 ] && WORKFLOWS+=" o2-analysis-hf-candidate-selector-x-to-jpsi-pi-pi"
