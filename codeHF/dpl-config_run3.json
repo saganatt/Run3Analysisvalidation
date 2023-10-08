@@ -2907,7 +2907,7 @@
         "produceTable": "-1",
         "produceFBextendedTable": "-1",
         "compatibilityIU": "false",
-        "itsMatching": "0",
+        "itsMatching": "1",
         "dcaSetup": "0",
         "ptMin": "0.1",
         "ptMax": "1e+10",
