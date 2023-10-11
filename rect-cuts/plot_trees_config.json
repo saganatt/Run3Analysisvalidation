@@ -2,8 +2,14 @@
   "input_files": [
     "/home/mkabus/Run3Analysisvalidation/rect-cuts/tree_Lc_LHC21k6_bkg_check_21082023_single.root",
     "/home/mkabus/Run3Analysisvalidation/rect-cuts/tree_Lc_LHC22o_small_bkg_check_18082023_single.root",
-    "/home/mkabus/Run3Analysisvalidation/rect-cuts/tree_Lc_LHC22b1b_bkg_check_21082023.root",
+    "/home/mkabus/Run3Analysisvalidation/rect-cuts/tree_Lc_LHC22b1b_bkg_check_21082023_single.root",
     "/home/mkabus/Run3Analysisvalidation/rect-cuts/tree_Lc_LHC23f4b2_bkg_check_28092023_single.root"
+  ],
+  "input_tree_names": [
+    "DF_0/O2hfcandlcfull",
+    "DF_0/O2hfcandlcfull",
+    "DF_0/O2hfcandlcfull",
+    "DF0/O2hfcandlcfull"
   ],
   "labels": [
     "LHC21k6",
@@ -17,5 +23,6 @@
     "bkg",
     "bkg",
     "bkg"
-  ]
+  ],
+  "pt_ranges": [1, 2, 4, 6, 8, 12, 24]
 }

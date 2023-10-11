@@ -26,6 +26,8 @@ from ROOT import (
     kGreen,
 )
 
+HIST_COLORS = [kBlack, kRed+1, kBlue-3, kGreen+3]
+
 
 def save_canvas(canvas, title):
     """
@@ -36,15 +38,15 @@ def save_canvas(canvas, title):
         canvas.SaveAs(title + file_format)
 
 
-def plot_tree_single(tree, settings_var, hist_title, selection, hcolor, htype):
+def plot_tree_single(tree, settings_var, histname, hist_title, selection, hcolor, htype): # pylint: disable=too-many-arguments
     """
     Get a single histogram from a tree.
     """
     # mc_flag == 1 << DecayType::LcToPKPi, decay type == 1
-    tree_cond = { "sig": "fM > 2.226 && fM < 2.346" if settings_var[1] != "fM" else "", "bkg": "fFlagMc == 0",
-                  "sig_mc": "(fFlagMc == 2 || fFlagMc == -2)"}
+    tree_cond = {"sig": "fM > 2.226 && fM < 2.346" if settings_var[1] != "fM" else "",
+                 "bkg": "fFlagMc == 0",
+                 "sig_mc": "(fFlagMc == 2 || fFlagMc == -2)"}
 
-    histname = f"h_{sig_or_bkg}_{settings_var[0]}"
     if htype == "TH1F":
         hist = TH1F(histname, f"{hist_title}", *settings_var[2])
         hist.SetLineColor(hcolor)
@@ -62,7 +64,7 @@ def plot_tree_single(tree, settings_var, hist_title, selection, hcolor, htype):
     return hist
 
 
-def plot_single(hists, c_name):
+def plot_single(hists, selections, c_name):
     """
     Plot a single signal vs bkg comparison.
     """
@@ -76,26 +78,25 @@ def plot_single(hists, c_name):
 
     counts_str = f"Sig histogram for {c_name} counts:"
     option = "hist"
-    for hist in hists:
-        entries = hist.GetEntries()
-        counts_str = f"{counts_str} {entries}"
-        hist.Draw(option)
+    for label in hists:
+        counts_str = f"{counts_str} {hists[label].GetEntries()}"
+        hists[label].Draw(option)
         option = "hist;same"
     print(counts_str)
 
     legend = TLegend(0.50, 0.72, 0.70, 0.90)
 
-    y_min = min((hist.GetMinimum() for hist in hists))
-    y_max = min((hist.GetMaximum() for hist in hists))
+    y_min = min((hists[label].GetMinimum() for label in hists))
+    y_max = min((hists[label].GetMaximum() for label in hists))
     y_range = y_max - y_min
-    for label, hist in hists.items():
+    for (label, hist), selection in zip(hists.items(), selections):
         hist.GetYaxis().SetRangeUser(0.0, y_max + margin / k * y_range)
         hist.GetYaxis().SetTitle("Normalized counts")
-        legend.AddEntry(hist, label, "L")
+        legend.AddEntry(hist, f"{label} {selection}", "L")
     legend.Draw()
 
-    for hist in hists:
-        hist.Write()
+    for label in hists:
+        hists[label].Write()
     save_canvas(canv, c_name)
 
 
@@ -118,40 +119,48 @@ def plot_total_mass(hists_mass, c_name, hist_title):
     save_canvas(canv, c_name)
 
 
+def get_projections(trees, hists, pt_ranges, i, histname, hist_title): # pylint: disable=too-many-arguments
+    """
+    Convert 2D histograms in hists to 1D projection in given pT bin.
+    """
+    projs = {}
+    for label in trees:
+        ind = hists[label].GetYaxis().FindBin(pt_ranges[i])
+        ind2 = hists[label].GetYaxis().FindBin(pt_ranges[i + 1] - 0.05)
+        projs[label] = hists[label].ProjectionX(f"h_{label}_{histname}",
+                                                ind, ind2)
+        projs[label].SetTitle(hist_title)
+    return projs
+
+
 def plot_hists(settings, pt_ranges, trees, selections):
     """
     Plot histograms from trees.
     """
-
-    hist_colors = [kBlack, kRed+1, kBlue-3, kGreen+3]
     for var, settings_var in settings.items():
+        print(f"Processing {settings_var[0]}")
         hists = {}
         htype = "TH1F" if "#it{p}_{T}" in var else "TH2F"
-        for ind, label, tree, selection in zip(trees.items(), selections):
-            hists[label] = plot_tree_single(tree, settings_var, f"Normalized {var}",
-                                            selection, hist_colors[ind], htype)
+        for ind, ((label, tree), selection) in enumerate(zip(trees.items(), selections)):
+            histname = f"h_{settings_var[0]}_{label}_{selection}"
+            hists[label] = plot_tree_single(tree, settings_var, histname,
+                                            f"Normalized {var} {label}",
+                                            selection, HIST_COLORS[ind], htype)
 
         if htype == "TH1F":
-            plot_single(hists, settings_var[0])
+            plot_single(hists, selections, settings_var[0])
         else:
             for i in range(len(pt_ranges) - 1):
                 histname = f"{settings_var[0]}_pt_{pt_ranges[i]}-{pt_ranges[i + 1]}"
-                hist_title = f"{var} for {pt_ranges[i]}" \
-                             f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}"
-                projs = {}
-                for label in trees:
-                    ind = hists[label].GetYaxis().FindBin(pt_ranges[i])
-                    ind2 = hists[label].GetYaxis().FindBin(pt_ranges[i + 1] - 0.05)
-                    projs[label] = hists[label].ProjectionX(f"h_{label}_{histname}",
-                                                                      ind, ind2)
-                    projs[label].SetTitle(hist_title)
-
-                plot_single(projs, histname)
+                projs = get_projections(trees, hists, pt_ranges, i, histname,
+                                        f"{var} for {pt_ranges[i]}" \
+                                        f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}")
+                plot_single(projs, selections, histname)
 
                 if var == "mass":
-                    hist_title = f"Total mass for {pt_ranges[i]}" \
-                                 f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}"
-                    plot_total_mass(projs, f"total_{histname}", hist_title)
+                    plot_total_mass(projs, f"total_{histname}",
+                                    f"Total mass for {pt_ranges[i]}" \
+                                    f" #leq #it{{p}}_{{T}} < {pt_ranges[i + 1]}")
 
 
 def main():
@@ -170,25 +179,24 @@ def main():
         config_text = config_f.read()
     config = json.loads(config_text)
 
-    settings = { "mass": ("mass", "fM", [600, 2.18, 2.38]),
-                 "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
+    settings = {"mass": ("mass", "fM", [600, 2.18, 2.38]),
+                "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1]),
 
-                 "decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
-                 "CPA": ("CPA", "fCpa", [100, 0.9, 1.0]),
-                 "CPA XY": ("CPA_XY", "fCpaXY", [100, 0.9, 1.0]),
-                 "Chi2PCA": ("Chi2PCA", "fChi2PCA", [400, 0.0, 2.0]),
-                 "impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
-                                        [100, -0.02, 0.02]),
-                 "impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
-                                        [100, -0.02, 0.02]),
-                 "impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
-                                        [100, -0.02, 0.02]),
-                 "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
-                 "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
-                 "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
-                 "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
+                "decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1]),
+                "CPA": ("CPA", "fCpa", [100, 0.9, 1.0]),
+                "CPA XY": ("CPA_XY", "fCpaXY", [100, 0.9, 1.0]),
+                "Chi2PCA": ("Chi2PCA", "fChi2PCA", [400, 0.0, 2.0]),
+                "impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
+                                       [100, -0.02, 0.02]),
+                "impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
+                                       [100, -0.02, 0.02]),
+                "impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
+                                       [100, -0.02, 0.02]),
+                "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 24]),
+                "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 24]),
+                "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 24]),
+                "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 24])
                 }
-    pt_ranges = [1, 2, 4, 6, 8, 12, 24]
 
     files = []
     for file in config["input_files"]:
@@ -196,10 +204,10 @@ def main():
     outfile = TFile(config["output_file"], "RECREATE") # pylint: disable=unused-variable
 
     trees = {}
-    for file, label in zip(files, config["labels"]):
-        trees[label] = file.Get("DF_0/O2hfcandlcfull")
+    for file, label, tree_name in zip(files, config["labels"], config["input_tree_names"]):
+        trees[label] = file.Get(tree_name)
 
-    plot_hists(settings, pt_ranges, trees, config["selections"])
+    plot_hists(settings, config["pt_ranges"], trees, config["selections"])
 
 
 if __name__ == "__main__":
