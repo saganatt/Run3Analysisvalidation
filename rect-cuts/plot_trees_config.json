@@ -18,11 +18,13 @@
     "LHC23f4b2"
   ],
   "output_file": "bkg_checks_4data.root",
+  "output_dir": "Lc/bkg-check/4data/all_bkg",
   "selections": [
     "bkg",
     "bkg",
     "bkg",
     "bkg"
   ],
-  "pt_ranges": [1, 2, 4, 6, 8, 12, 24]
+  "pt_ranges": [1, 2, 4, 6, 8, 12, 24],
+  "plot_total_mass": false
 }
