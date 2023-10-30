@@ -16,8 +16,8 @@
 # Here you can select the AliPhysics and O2Physics branches to load.
 # BRANCH_ALI="master"
 # ENV_ALI="alienv setenv AliPhysics/latest-${BRANCH_ALI}-o2 -c"
-# BRANCH_O2="master"
-# ENV_O2="alienv setenv O2Physics/latest-${BRANCH_O2}-o2 -c"
+BRANCH_O2="test-loops"
+ENV_O2="alienv setenv O2Physics/latest-${BRANCH_O2}-o2 -c"
 
 # Steps
 DOCLEAN=1           # Delete created files (before and after running tasks).
