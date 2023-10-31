@@ -35,26 +35,29 @@ TREE_COND = {"sig": lambda settings_var:
              "bkg": "fM < 2.226 || fM > 2.346",
              "bkg_mc": "fFlagMc == 0"}
 
-# hist title: hist name, variable from input, binning, position of TLegend
-SETTINGS = {"mass": ("mass", "fM", [100, 2.18, 2.38], [0.29, 0.75, 0.76, 0.90]),
-            "decay length": ("decay_length", "fDecayLength", [100, 0.0, 0.1], [0.40, 0.75, 0.895, 0.90]),
-
-            "decay length XY": ("decay_length_XY", "fDecayLengthXY", [100, 0.0, 0.1], [0.40, 0.75, 0.895, 0.90]),
-            "CPA": ("CPA", "fCpa", [100, 0.9, 1.0], [0.15, 0.75, 0.65, 0.90]),
-            "CPA XY": ("CPA_XY", "fCpaXY", [100, 0.9, 1.0], [0.15, 0.75, 0.65, 0.90]),
-            "Chi2PCA": ("Chi2PCA", "fChi2PCA", [400, 0.0, 2.0], [0.40, 0.75, 0.895, 0.90]),
+# hist title: hist name, variable from input, binning, position of TLegend, split legend lines
+SETTINGS = {"mass": ("mass", "fM", [100, 2.18, 2.38], [0.29, 0.75, 0.76, 0.90], False),
+            "decay length": ("decay_length", "fDecayLength",
+                             [100, 0.0, 0.1], [0.40, 0.75, 0.895, 0.90], False),
+            "decay length XY": ("decay_length_XY", "fDecayLengthXY",
+                                [100, 0.0, 0.1], [0.40, 0.75, 0.895, 0.90], False),
+            "CPA": ("CPA", "fCpa", [100, 0.9, 1.0], [0.15, 0.75, 0.65, 0.90], False),
+            "CPA XY": ("CPA_XY", "fCpaXY", [100, 0.9, 1.0], [0.15, 0.75, 0.65, 0.90], False),
+            "Chi2PCA": ("Chi2PCA", "fChi2PCA", [400, 0.0, 2.0], [0.40, 0.75, 0.895, 0.90], False),
             "impact parameter 0": ("impact_parameter_0", "fImpactParameter0",
-                                   [100, -0.02, 0.02], [0.60, 0.60, 0.895, 0.90]),
+                                   [100, -0.02, 0.02], [0.60, 0.60, 0.895, 0.90], True),
             "impact parameter 1": ("impact_parameter_1", "fImpactParameter1",
-                                   [100, -0.02, 0.02], [0.60, 0.60, 0.895, 0.90]),
+                                   [100, -0.02, 0.02], [0.60, 0.60, 0.895, 0.90], True),
             "impact parameter 2": ("impact_parameter_2", "fImpactParameter2",
-                                   [100, -0.02, 0.02], [0.60, 0.60, 0.895, 0.90]),
-            "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 10], [0.40, 0.75, 0.895, 0.90]),
-            "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0", [200, 0, 6], [0.40, 0.75, 0.895, 0.90]),
-            "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1", [200, 0, 6], [0.40, 0.75, 0.895, 0.90]),
-            "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2", [200, 0, 6], [0.40, 0.75, 0.895, 0.90])
+                                   [100, -0.02, 0.02], [0.60, 0.60, 0.895, 0.90], True),
+            "#Lambda_{c} #it{p}_{T}": ("pt", "fPt", [200, 0, 10], [0.40, 0.75, 0.895, 0.90], False),
+            "#it{p}_{T} prong_{0}": ("pt_prong0", "fPtProng0",
+                                     [200, 0, 6], [0.40, 0.75, 0.895, 0.90], False),
+            "#it{p}_{T} prong_{1}": ("pt_prong1", "fPtProng1",
+                                     [200, 0, 6], [0.40, 0.75, 0.895, 0.90], False),
+            "#it{p}_{T} prong_{2}": ("pt_prong2", "fPtProng2",
+                                     [200, 0, 6], [0.40, 0.75, 0.895, 0.90], False)
             }
-SPLIT_LEGEND_LINES = False
 
 
 def save_canvas(canvas, title):
@@ -87,7 +90,7 @@ def plot_tree_single(tree, settings_var, histname, hist_title, selection, hcolor
     return hist
 
 
-def plot_single(hists, c_name, config, legend_pos):
+def plot_single(hists, c_name, config, legend_pos, split_lines): # pylint:disable=too-many-locals
     """
     Plot a single comparison.
     """
@@ -116,7 +119,7 @@ def plot_single(hists, c_name, config, legend_pos):
     for (label, hist), selection in zip(hists.items(), config["selections"]):
         hist.GetYaxis().SetRangeUser(0.0, y_max + margin / k * y_range)
         hist.GetYaxis().SetTitle("Normalized counts")
-        if SPLIT_LEGEND_LINES:
+        if split_lines:
             legend.AddEntry(hist, f'#splitline{{{label} {selection}:}}'
                                   f'{{{TREE_COND[selection]}}}', "L")
         else:
@@ -176,7 +179,7 @@ def plot_hists(trees, config):
                                             selection, HIST_COLORS[ind], htype)
 
         if htype == "TH1F":
-            plot_single(hists, settings_var[0], config, settings_var[3])
+            plot_single(hists, settings_var[0], config, settings_var[3], settings_var[4])
         else:
             for i in range(len(config["pt_ranges"]) - 1):
                 histname = f"{settings_var[0]}_pt_" \
@@ -184,7 +187,7 @@ def plot_hists(trees, config):
                 projs = get_projections(trees, hists, config["pt_ranges"], i, histname,
                                         f'{var} for {config["pt_ranges"][i]}' \
                                         f' #leq #it{{p}}_{{T}} < {config["pt_ranges"][i + 1]}')
-                plot_single(projs, histname, config, settings_var[3])
+                plot_single(projs, histname, config, settings_var[3], settings_var[4])
 
                 if var == "mass" and config["plot_total_mass"]:
                     plot_total_mass(projs, f"total_{histname}",
