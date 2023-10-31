@@ -1,4 +1,9 @@
 {
+  "labels": [
+    "LHC22o",
+    "LHC22b1b",
+    "LHC23f4b2"
+  ],
   "input_files": [
     "lc-dl-checks/LHC22o/dl0.000/AnalysisResults_O2.root",
     "lc-dl-checks/LHC22b1b/dl0.000/AnalysisResults_O2.root",
@@ -6,6 +11,7 @@
   ],
   "hist_path": "hf-task-lc/Data/hMassVsPt",
   "output_file": "invmass_dl0.000.root",
+  "output_label": "dl0.000",
   "output_dir": "lc-dl-checks/projected",
   "pt_min": [
     2,
