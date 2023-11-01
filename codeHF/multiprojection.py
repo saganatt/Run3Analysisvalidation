@@ -14,6 +14,7 @@ import json
 from ROOT import (
     TCanvas,
     TFile,
+    TLatex,
     TLegend,
     gROOT,
     gStyle,
@@ -67,7 +68,13 @@ def plot(indices, config, files):
         print(f"Processing pT bin: [{binmin}, {binmax})")
         hname = f"proj_{binmin}-{binmax}"
         canv = TCanvas(f"c_{hname}", f"c_{hname}")
-        legend = TLegend(0.40, 0.75, 0.895, 0.90)
+        legend = TLegend(0.75, 0.70, 0.90, 0.90)
+        legend.SetTextSize(0.03)
+
+        latexa = TLatex()
+        latexa.SetTextSize(0.08)
+        latexa.SetTextFont(62) # bold helvetica
+        latexa.SetTextAlign(2) # centered
 
         projs = []
 
@@ -93,6 +100,7 @@ def plot(indices, config, files):
             h_proj.Write()
 
         legend.Draw()
+        latexa.DrawLatexNDC(0.72, 0.95, config["output_label"])
         save_canvas(canv, f'{config["output_dir"]}/{hname}-{config["output_label"]}')
 
 
