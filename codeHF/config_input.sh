@@ -4,9 +4,9 @@
 # Input specification for runtest.sh
 # (Modifies input parameters.)
 
-INPUT_CASE=2            # Input case
+INPUT_CASE=7            # Input case
 
-NFILESMAX=1             # Maximum number of processed input files. (Set to -0 to process all; to -N to process all but the last N files.)
+NFILESMAX=10             # Maximum number of processed input files. (Set to -0 to process all; to -N to process all but the last N files.)
 
 # Number of input files per job (Automatic optimisation on if < 1.)
 NFILESPERJOB_CONVERT=0  # Conversion
@@ -104,5 +104,21 @@ case $INPUT_CASE in
     INPUT_DIR="$INPUT_BASE/Run2/pp_13TeV/real_converted/LHC17j_20220601" # converted good AO2Ds
     INPUT_FILES="AO2D.root"
     INPUT_IS_O2=1
+    ;;
+  13)
+    INPUT_LABEL="Run 3, p-p 13 TeV, MC LHC22b1b (AO2D), D2H enriched"
+    INPUT_DIR="/data2/mkabus/Run3/pp_13.6TeV/sim/LHC22b1b/input_files/"
+    INPUT_FILES="AO2D.root"
+    INPUT_IS_O2=1
+    INPUT_IS_MC=1
+    INPUT_RUN=3
+    ;;
+  14)
+    INPUT_LABEL="Run 3, p-p 13 TeV, MC LHC23f4b2, general purpose"
+    INPUT_DIR="/data2/mkabus/Run3/pp_13.6TeV/sim/LHC23f4b2/input_files/"
+    INPUT_FILES="AO2D.root"
+    INPUT_IS_O2=1
+    INPUT_IS_MC=1
+    INPUT_RUN=3
     ;;
   esac
