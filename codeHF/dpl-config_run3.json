@@ -19,12 +19,12 @@
         "xVertexMax": "100",
         "yVertexMin": "-100",
         "yVertexMax": "100",
-        "zVertexMin": "-100",
-        "zVertexMax": "100",
+        "zVertexMin": "-10",
+        "zVertexMax": "10",
         "nContribMin": "0",
         "chi2Max": "0",
         "triggerClassName": "kINT7",
-        "useSel8Trigger": "false",
+        "useSel8Trigger": "true",
         "axisNumContributors": {
             "values": [
                 "200",
@@ -32,17 +32,17 @@
                 "199.5"
             ]
         },
-        "processTrigSel": "false",
-        "processNoTrigSel": "true"
+        "processTrigSel": "true",
+        "processNoTrigSel": "false"
     },
     "hf-track-index-skim-creator-tag-sel-tracks": {
         "isRun2": "true",
-        "doPvRefit": "false",
+        "doPvRefit": "true",
         "fillHistograms": "true",
         "debug": "false",
         "doCutQuality": "true",
         "useIsGlobalTrack": "false",
-        "useIsGlobalTrackWoDCA": "false",
+        "useIsGlobalTrackWoDCA": "true",
         "tpcNClsFoundMin": "70",
         "binsPtTrack": {
             "values": [
@@ -63,12 +63,12 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.03", "1"],
-                ["0.03", "1"],
-                ["0.03", "1"],
-                ["0.03", "1"],
-                ["0.00", "10"],
-                ["0.00", "10"]
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"]
             ]
         },
         "etaMinTrack2Prong": "-99999",
@@ -81,12 +81,12 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.03", "1"],
-                ["0.03", "1"],
-                ["0.03", "1"],
-                ["0.03", "1"],
-                ["0.00", "10"],
-                ["0.00", "10"]
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"],
+                ["0.001", "10"]
             ]
         },
         "etaMinTrack3Prong": "-99999",
@@ -99,16 +99,16 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.00", "1"],
-                ["0.00", "1"],
-                ["0.00", "1"],
-                ["0.00", "1"],
-                ["0.00", "1"],
-                ["0.00", "1"]
+                ["0.00", "0"],
+                ["0.00", "0"],
+                ["0.00", "0"],
+                ["0.00", "0"],
+                ["0.00", "0"],
+                ["0.00", "0"]
             ]
         },
         "etaMinTrackBach": "-99999",
-        "etaMaxTrackBach": "0.8",
+        "etaMaxTrackBach": "0",
         "ccdbUrl": "http://alice-ccdb.cern.ch",
         "ccdbPathLut": "GLO/Param/MatLUT",
         "ccdbPathGrp": "GLO/GRP/GRP",
@@ -158,8 +158,8 @@
         "propagateToPCA": "true",
         "useAbsDCA": "false",
         "useWeightedFinalPCA": "false",
-        "maxR": "5",
-        "maxDZIni": "999",
+        "maxR": "200",
+        "maxDZIni": "4",
         "minParamChange": "0.001",
         "minRelChi2Change": "0.9",
         "ccdbUrl": "http://alice-ccdb.cern.ch",
@@ -168,7 +168,7 @@
         "ccdbPathGrpMag": "GLO/Config/GRPMagField",
         "binsPtD0ToPiK": {
             "values": [
-                "0",
+                "1",
                 "5",
                 "1000"
             ]
@@ -185,20 +185,20 @@
                 [
                     "1.61",
                     "2.12",
-                    "0.5",
+                    "2",
                     "0"
                 ],
                 [
                     "1.61",
                     "2.12",
-                    "0.5",
+                    "2",
                     "0"
                 ]
             ]
         },
         "binsPtJpsiToEE": {
             "values": [
-                "0",
+                "1",
                 "5",
                 "1000"
             ]
@@ -215,20 +215,20 @@
                 [
                     "2.5",
                     "4.1",
-                    "-2",
+                    "2",
                     "1000"
                 ],
                 [
                     "2.5",
                     "4.1",
-                    "-2",
+                    "2",
                     "1000"
                 ]
             ]
         },
         "binsPtJpsiToMuMu": {
             "values": [
-                "0",
+                "1",
                 "5",
                 "1000"
             ]
@@ -245,13 +245,13 @@
                 [
                     "2.5",
                     "4.1",
-                    "-2",
+                    "2",
                     "1000"
                 ],
                 [
                     "2.5",
                     "4.1",
-                    "-2",
+                    "2",
                     "1000"
                 ]
             ]
@@ -275,20 +275,20 @@
                 [
                     "1.67",
                     "2.07",
-                    "0.7",
+                    "2",
                     "0.03"
                 ],
                 [
                     "1.67",
                     "2.07",
-                    "0.7",
+                    "2",
                     "0.03"
                 ]
             ]
         },
         "binsPtDsToKKPi": {
             "values": [
-                "1.5",
+                "1",
                 "5",
                 "1000"
             ]
@@ -305,20 +305,20 @@
                 [
                     "1.74",
                     "2.18",
-                    "0.94",
+                    "2",
                     "0.02"
                 ],
                 [
                     "1.74",
                     "2.18",
-                    "0.94",
+                    "2",
                     "0.02"
                 ]
             ]
         },
         "binsPtLcToPKPi": {
             "values": [
-                "4",
+                "2",
                 "5",
                 "1000"
             ]
@@ -333,22 +333,22 @@
             ],
             "values": [
                 [
-                    "1.98",
-                    "2.58",
-                    "-2",
-                    "0"
+                    "1.986",
+                    "2.586",
+                    "0.99",
+                    "0.01"
                 ],
                 [
-                    "1.98",
-                    "2.58",
-                    "-2",
-                    "0"
+                    "1.986",
+                    "2.586",
+                    "0.99",
+                    "0.01"
                 ]
             ]
         },
         "binsPtXicToPKPi": {
             "values": [
-                "4",
+                "1",
                 "5",
                 "1000"
             ]
@@ -365,13 +365,13 @@
                 [
                     "2.1",
                     "2.8",
-                    "-2",
+                    "2",
                     "0"
                 ],
                 [
                     "2.1",
                     "2.8",
-                    "-2",
+                    "2",
                     "0"
                 ]
             ]
@@ -398,8 +398,8 @@
             ]
         },
         "processNo2And3Prongs": "false",
-        "process2And3ProngsWithPvRefit": "false",
-        "process2And3ProngsNoPvRefit": "true"
+        "process2And3ProngsWithPvRefit": "true",
+        "process2And3ProngsNoPvRefit": "false"
     },
     "hf-track-index-skim-creator-cascades": {
         "isRun2": "true",
@@ -492,8 +492,8 @@
         "propagateToPCA": "true",
         "useAbsDCA": "false",
         "useWeightedFinalPCA": "false",
-        "maxR": "5",
-        "maxDZIni": "999",
+        "maxR": "200",
+        "maxDZIni": "4",
         "minParamChange": "0.001",
         "minRelChi2Change": "0.9",
         "fillHistograms": "true",
@@ -502,8 +502,8 @@
         "ccdbPathLut": "GLO/Param/MatLUT",
         "ccdbPathGrp": "GLO/GRP/GRP",
         "ccdbPathGrpMag": "GLO/Config/GRPMagField",
-        "processPvRefit": "false",
-        "processNoPvRefit": "true"
+        "processPvRefit": "true",
+        "processNoPvRefit": "false"
     },
     "hf-candidate-creator-3prong-expressions": {
         "processMc": "true"
@@ -1433,20 +1433,20 @@
     },
     "hf-candidate-selector-lc": {
         "ptCandMin": "0",
-        "ptCandMax": "24",
-        "usePid": "false",
+        "ptCandMax": "36",
+        "usePid": "true",
         "ptPidTpcMin": "0.1",
         "ptPidTpcMax": "1",
-        "nSigmaTpcMax": "3",
+        "nSigmaTpcMax": "4",
         "nSigmaTpcCombinedMax": "5",
         "ptPidTofMin": "0.5",
-        "ptPidTofMax": "2",
-        "nSigmaTofMax": "3",
+        "ptPidTofMax": "2.5",
+        "nSigmaTofMax": "4",
         "nSigmaTofCombinedMax": "5",
         "usePidBayes": "false",
         "ptPidBayesMin": "0.1",
         "ptPidBayesMax": "5",
-        "usePidTpcAndTof": "false",
+        "usePidTpcAndTof": "true",
         "binsPt": {
             "values": [
                 "0",
@@ -1485,16 +1485,16 @@
                 "cos pointing angle"
             ],
             "values": [
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"],
-                [ "0.300", "0.4", "0.4", "0.4", "0.5", "0.004", "0"]
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"],
+                [ "999", "-1", "-1", "-1", "999", "-1", "-1"]
             ]
         }
     },
@@ -2146,9 +2146,9 @@
         }
     },
     "hf-task-lc": {
-        "selectionFlagLc": "0",
-        "yCandGenMax": "0.5",
-        "yCandRecoMax": "0.8",
+        "selectionFlagLc": "1",
+        "yCandGenMax": "-1",
+        "yCandRecoMax": "-1",
         "binsPt": {
             "values": [
                 "0",
@@ -2929,7 +2929,7 @@
         "produceTable": "-1",
         "produceFBextendedTable": "-1",
         "compatibilityIU": "false",
-        "itsMatching": "0",
+        "itsMatching": "1",
         "dcaSetup": "0",
         "ptMin": "0.1",
         "ptMax": "1e+10",

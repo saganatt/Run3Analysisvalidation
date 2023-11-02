@@ -16,15 +16,15 @@
 # Here you can select the AliPhysics and O2Physics branches to load.
 # BRANCH_ALI="master"
 # ENV_ALI="alienv setenv AliPhysics/latest-${BRANCH_ALI}-o2 -c"
-# BRANCH_O2="master"
-# ENV_O2="alienv setenv O2Physics/latest-${BRANCH_O2}-o2 -c"
+BRANCH_O2="test-loops"
+ENV_O2="alienv setenv O2Physics/latest-${BRANCH_O2}-o2 -c"
 
 # Steps
 DOCLEAN=1           # Delete created files (before and after running tasks).
 DOCONVERT=1         # Convert AliESDs.root to AO2D.root.
 DOALI=1             # Run AliPhysics tasks.
 DOO2=1              # Run O2 tasks.
-DOPOSTPROCESS=1     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
+DOPOSTPROCESS=0     # Run output postprocessing. (Comparison plots. Requires DOALI=1 and/or DOO2=1)
 
 # Disable incompatible steps.
 [ "$INPUT_IS_O2" -eq 1 ] && { DOCONVERT=0; DOALI=0; }
@@ -48,7 +48,7 @@ DOO2_PID_TOF_QA=0   # pid-tof-qa-mc
 DOO2_PID_BAYES=0    # pid-bayes
 # Vertexing
 DOO2_SKIM=1         # hf-track-index-skim-creator
-DOO2_CAND_2PRONG=1  # hf-candidate-creator-2prong
+DOO2_CAND_2PRONG=0  # hf-candidate-creator-2prong
 DOO2_CAND_3PRONG=1  # hf-candidate-creator-3prong
 DOO2_CAND_CASC=0    # hf-candidate-creator-cascade
 DOO2_CAND_LB=0      # hf-candidate-creator-lb
@@ -62,7 +62,7 @@ DOO2_CAND_DSTAR=0   # hf-candidate-creator-dstar
 DOO2_SEL_D0=0       # hf-candidate-selector-d0
 DOO2_SEL_DS=0       # hf-candidate-selector-ds-to-k-k-pi
 DOO2_SEL_DPLUS=0    # hf-candidate-selector-dplus-to-pi-k-pi
-DOO2_SEL_LC=0       # hf-candidate-selector-lc
+DOO2_SEL_LC=1       # hf-candidate-selector-lc
 DOO2_SEL_LB=0       # hf-candidate-selector-lb-to-lc-pi
 DOO2_SEL_XIC=0      # hf-candidate-selector-xic-to-p-k-pi
 DOO2_SEL_JPSI=0     # hf-candidate-selector-jpsi
@@ -73,7 +73,7 @@ DOO2_SEL_XICC=0     # hf-candidate-selector-xicc-to-p-k-pi-pi
 DOO2_SEL_B0=0       # hf-candidate-selector-b0-to-d-pi
 DOO2_SEL_BPLUS=0    # hf-candidate-selector-bplus-to-d0-pi
 # User tasks
-DOO2_TASK_D0=1      # hf-task-d0
+DOO2_TASK_D0=0      # hf-task-d0
 DOO2_TASK_DS=0      # hf-task-ds
 DOO2_TASK_DPLUS=0   # hf-task-dplus
 DOO2_TASK_LC=1      # hf-task-lc
@@ -122,7 +122,7 @@ DOO2_CONV_BC=1      # bc-converter
 DOO2_CONV_TRKEX=1   # tracks-extra-converter
 
 # Selection cuts
-APPLYCUTS_D0=1      # Apply D0 selection cuts.
+APPLYCUTS_D0=0      # Apply D0 selection cuts.
 APPLYCUTS_DS=0      # Apply Ds selection cuts.
 APPLYCUTS_DPLUS=0   # Apply D+ selection cuts.
 APPLYCUTS_LC=1      # Apply Λc selection cuts.
