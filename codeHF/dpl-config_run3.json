@@ -63,12 +63,12 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"]
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"]
             ]
         },
         "etaMinTrack2Prong": "-99999",
@@ -81,17 +81,17 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"],
-                ["0.001", "10"]
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"],
+                ["0.0005", "10"]
             ]
         },
         "etaMinTrack3Prong": "-99999",
         "etaMaxTrack3Prong": "0.8",
-        "ptMinTrackBach": "0.3",
+        "ptMinTrackBach": "0.4",
         "cutsTrackBach": {
             "labels_rows": "",
             "labels_cols": [
@@ -335,14 +335,14 @@
                 [
                     "1.986",
                     "2.586",
-                    "0.99",
-                    "0.01"
+                    "0.7",
+                    "0.005"
                 ],
                 [
                     "1.986",
                     "2.586",
-                    "0.99",
-                    "0.01"
+                    "0.7",
+                    "0.005"
                 ]
             ]
         },
@@ -1436,13 +1436,13 @@
         "ptCandMax": "36",
         "usePid": "true",
         "ptPidTpcMin": "0.1",
-        "ptPidTpcMax": "1",
-        "nSigmaTpcMax": "4",
-        "nSigmaTpcCombinedMax": "5",
+        "ptPidTpcMax": "10",
+        "nSigmaTpcMax": "3",
+        "nSigmaTpcCombinedMax": "3",
         "ptPidTofMin": "0.5",
-        "ptPidTofMax": "2.5",
-        "nSigmaTofMax": "4",
-        "nSigmaTofCombinedMax": "5",
+        "ptPidTofMax": "10",
+        "nSigmaTofMax": "3",
+        "nSigmaTofCombinedMax": "3",
         "usePidBayes": "false",
         "ptPidBayesMin": "0.1",
         "ptPidBayesMax": "5",
@@ -1450,15 +1450,6 @@
         "binsPt": {
             "values": [
                 "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "8",
-                "12",
-                "24",
                 "36"
             ]
         },
@@ -2914,7 +2905,7 @@
     "event-selection-task": {
         "syst": "pp",
         "muonSelection": "0",
-        "customDeltaBC": "300",
+        "customDeltaBC": "-1",
         "isMC": "true",
         "processRun2": "true",
         "processRun3": "false"
@@ -2998,7 +2989,7 @@
         "maxNtracksInSet": "10",
         "processRun2": "true",
         "processNoFT0": "false",
-        "processFT0": "false",
+        "processFT0": "true",
         "processOnlyFT0": "false"
     },
     "tof-pid-full": {
@@ -3090,15 +3081,15 @@
         "ccdbPathTOF": "Analysis/PID/TOF",
         "ccdbPathTPC": "Analysis/PID/TPC/Response",
         "ccdb-timestamp": "-1",
-        "pid-el": "1",
-        "pid-mu": "1",
-        "pid-pi": "1",
-        "pid-ka": "1",
-        "pid-pr": "1",
-        "pid-de": "1",
-        "pid-tr": "1",
-        "pid-he": "1",
-        "pid-al": "1"
+        "pid-el": "-1",
+        "pid-mu": "-1",
+        "pid-pi": "-1",
+        "pid-ka": "-1",
+        "pid-pr": "-1",
+        "pid-de": "-1",
+        "pid-tr": "-1",
+        "pid-he": "-1",
+        "pid-al": "-1"
     },
     "lambdakzero-builder": {
         "createV0CovMats": "-1",
