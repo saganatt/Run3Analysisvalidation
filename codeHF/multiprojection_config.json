@@ -1,0 +1,32 @@
+{
+  "labels": [
+    "LHC22o",
+    "LHC22b1b",
+    "LHC23f4b2",
+    "LHC21k6"
+  ],
+  "input_files": [
+    "lc-dl-checks/LHC22o/dl0.020/AnalysisResults_O2.root",
+    "lc-dl-checks/LHC22b1b/dl0.020/AnalysisResults_O2.root",
+    "lc-dl-checks/LHC23f4b2/dl0.020/AnalysisResults_O2.root",
+    "lc-dl-checks/LHC21k6/dl0.020/AnalysisResults_O2.root"
+  ],
+  "hist_path": "hf-task-lc/Data/hMassVsPt",
+  "output_file": "invmass_dl0.020.root",
+  "output_label": "dl0.020",
+  "output_dir": "lc-dl-checks/projected",
+  "pt_min": [
+    2,
+    4,
+    6,
+    8,
+    12
+  ],
+  "pt_max": [
+    4,
+    6,
+    8,
+    12,
+    24
+  ]
+}
