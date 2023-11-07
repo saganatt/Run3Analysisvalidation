@@ -15,10 +15,10 @@
     "internal-dpl-aod-index-builder": "",
     "hf-track-index-skim-creator-tag-sel-collisions": {
         "fillHistograms": "true",
-        "xVertexMin": "-100",
-        "xVertexMax": "100",
-        "yVertexMin": "-100",
-        "yVertexMax": "100",
+        "xVertexMin": "-1",
+        "xVertexMax": "1",
+        "yVertexMin": "-1",
+        "yVertexMax": "1",
         "zVertexMin": "-10",
         "zVertexMax": "10",
         "nContribMin": "0",
@@ -37,7 +37,7 @@
     },
     "hf-track-index-skim-creator-tag-sel-tracks": {
         "isRun2": "true",
-        "doPvRefit": "true",
+        "doPvRefit": "false",
         "fillHistograms": "true",
         "debug": "false",
         "doCutQuality": "true",
@@ -55,7 +55,7 @@
                 "100"
             ]
         },
-        "ptMinTrack2Prong": "0.4",
+        "ptMinTrack2Prong": "0.3",
         "cutsTrack2Prong": {
             "labels_rows": "",
             "labels_cols": [
@@ -63,17 +63,17 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"]
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"]
             ]
         },
         "etaMinTrack2Prong": "-99999",
         "etaMaxTrack2Prong": "0.8",
-        "ptMinTrack3Prong": "0.4",
+        "ptMinTrack3Prong": "0.3",
         "cutsTrack3Prong": {
             "labels_rows": "",
             "labels_cols": [
@@ -81,17 +81,17 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"],
-                ["0.0005", "10"]
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"],
+                ["0", "10"]
             ]
         },
         "etaMinTrack3Prong": "-99999",
         "etaMaxTrack3Prong": "0.8",
-        "ptMinTrackBach": "0.4",
+        "ptMinTrackBach": "1000",
         "cutsTrackBach": {
             "labels_rows": "",
             "labels_cols": [
@@ -99,12 +99,12 @@
                 "max_dcaxytoprimary"
             ],
             "values": [
-                ["0.00", "0"],
-                ["0.00", "0"],
-                ["0.00", "0"],
-                ["0.00", "0"],
-                ["0.00", "0"],
-                ["0.00", "0"]
+                ["0", "0"],
+                ["0", "0"],
+                ["0", "0"],
+                ["0", "0"],
+                ["0", "0"],
+                ["0", "0"]
             ]
         },
         "etaMinTrackBach": "-99999",
@@ -168,7 +168,7 @@
         "ccdbPathGrpMag": "GLO/Config/GRPMagField",
         "binsPtD0ToPiK": {
             "values": [
-                "1",
+                "0",
                 "5",
                 "1000"
             ]
@@ -258,7 +258,7 @@
         },
         "binsPtDplusToPiKPi": {
             "values": [
-                "1",
+                "0",
                 "5",
                 "1000"
             ]
@@ -288,7 +288,7 @@
         },
         "binsPtDsToKKPi": {
             "values": [
-                "1",
+                "0",
                 "5",
                 "1000"
             ]
@@ -335,20 +335,20 @@
                 [
                     "1.986",
                     "2.586",
-                    "0.7",
+                    "0.75",
                     "0.005"
                 ],
                 [
                     "1.986",
                     "2.586",
-                    "0.7",
+                    "0.85",
                     "0.005"
                 ]
             ]
         },
         "binsPtXicToPKPi": {
             "values": [
-                "1",
+                "0",
                 "5",
                 "1000"
             ]
@@ -398,8 +398,8 @@
             ]
         },
         "processNo2And3Prongs": "false",
-        "process2And3ProngsWithPvRefit": "true",
-        "process2And3ProngsNoPvRefit": "false"
+        "process2And3ProngsWithPvRefit": "false",
+        "process2And3ProngsNoPvRefit": "true"
     },
     "hf-track-index-skim-creator-cascades": {
         "isRun2": "true",
