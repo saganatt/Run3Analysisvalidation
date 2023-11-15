@@ -43,6 +43,9 @@
         "doCutQuality": "true",
         "useIsGlobalTrack": "false",
         "useIsGlobalTrackWoDCA": "true",
+        "useIsGlobalTrackForSoftPion": "false",
+        "useIsGlobalTrackWoDCAForSoftPion": "true",
+        "useIsQualityTrackITSForSoftPion": "false",
         "tpcNClsFoundMin": "70",
         "binsPtTrack": {
             "values": [
@@ -52,7 +55,7 @@
                 "1.5",
                 "2",
                 "3",
-                "100"
+                "1000"
             ]
         },
         "ptMinTrack2Prong": "0.3",
@@ -502,8 +505,8 @@
         "ccdbPathLut": "GLO/Param/MatLUT",
         "ccdbPathGrp": "GLO/GRP/GRP",
         "ccdbPathGrpMag": "GLO/Config/GRPMagField",
-        "processPvRefit": "true",
-        "processNoPvRefit": "false"
+        "processPvRefit": "false",
+        "processNoPvRefit": "true"
     },
     "hf-candidate-creator-3prong-expressions": {
         "processMc": "true"
@@ -2928,18 +2931,19 @@
         "etaMax": "0.8"
     },
     "track-propagation": {
+        "minPropagationDistance": "5",
         "processStandard": "false",
         "processCovariance": "true"
     },
     "track-to-collision-association": {
         "nSigmaForTimeCompat": "4",
-        "timeMargin": "0",
+        "timeMargin": "500",
         "setTrackSelections": "1",
         "usePVAssociation": "true",
-        "includeUnassigned": "false",
+        "includeUnassigned": "true",
         "fillTableOfCollIdsPerTrack": "false",
-        "processAssocWithTime": "false",
-        "processStandardAssoc": "true"
+        "processAssocWithTime": "true",
+        "processStandardAssoc": "false"
     },
     "centrality-table": {
         "estRun2V0M": "-1",

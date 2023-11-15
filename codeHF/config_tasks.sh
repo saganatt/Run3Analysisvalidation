@@ -16,7 +16,7 @@
 # Here you can select the AliPhysics and O2Physics branches to load.
 # BRANCH_ALI="master"
 # ENV_ALI="alienv setenv AliPhysics/latest-${BRANCH_ALI}-o2 -c"
-BRANCH_O2="test-loops"
+BRANCH_O2="master"
 ENV_O2="alienv setenv O2Physics/latest-${BRANCH_O2}-o2 -c"
 
 # Steps
@@ -35,7 +35,7 @@ MAKE_GRAPH=0        # Make topology graph.
 
 # Activation of O2 workflows
 # Trigger selection
-DOO2_TRIGSEL=0      # event-selection
+DOO2_TRIGSEL=1      # event-selection
 # QA
 DOO2_REJ_ALICE3=0   # hf-task-qa-pid-rejection
 DOO2_QA_EFF=0       # qa-efficiency
@@ -213,10 +213,10 @@ function AdjustJson {
   fi
 
   # hf-track-index-skim-creator-tag-sel-tracks, hf-track-index-skim-creator-cascades
-  if [ "$INPUT_RUN" -eq 3 ]; then
+  #if [ "$INPUT_RUN" -eq 3 ]; then
     # do not perform track quality cuts for Run 3 until they are updated
-    ReplaceString "\"doCutQuality\": \"true\"" "\"doCutQuality\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
-  fi
+  #  ReplaceString "\"doCutQuality\": \"true\"" "\"doCutQuality\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  #fi
 
   # hf-track-index-skim-creator-cascades
   if [[ $DOO2_CAND_CASC -eq 1 || $DOO2_SEL_LCK0SP -eq 1 || $DOO2_TASK_LCK0SP -eq 1 || $DOO2_TREE_LCK0SP -eq 1 ]]; then
@@ -253,11 +253,11 @@ function AdjustJson {
   fi
 
   # tof-event-time
-  if [ "$INPUT_RUN" -eq 3 ]; then
-    ReplaceString "\"processNoFT0\": \"false\"" "\"processNoFT0\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
-  else
-    ReplaceString "\"processNoFT0\": \"true\"" "\"processNoFT0\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
-  fi
+  #if [ "$INPUT_RUN" -eq 3 ]; then
+  #  ReplaceString "\"processNoFT0\": \"false\"" "\"processNoFT0\": \"true\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  #else
+  #  ReplaceString "\"processNoFT0\": \"true\"" "\"processNoFT0\": \"false\"" "$JSON" || ErrExit "Failed to edit $JSON."
+  #fi
 
   # hf-task-flow
   if [ "$INPUT_RUN" -eq 3 ]; then
