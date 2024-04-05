@@ -1,11 +1,26 @@
+#!/usr/bin/env python
 """
-Simple projection macro that prepares AnalysisResults.root for the PWGHF mass fitter.
+file: projection.py
+brief: Simple projection macro that prepares AnalysisResults.root for the PWGHF mass fitter.
+usage: ./projection.py AnalysisResults.root hf-task-lc/Data/hMassVsPt
+                       ~/alice/O2Physics/PWGHF/D2H/Macros/config_massfitter.json invmass.root
+author: Maja Kabus <mkabus@cern.ch>, CERN / Warsaw University of Technology
 """
 
 import argparse
 import json
 
-from ROOT import TFile, gROOT # pylint: disable=import-error
+from ROOT import TFile, gROOT, TCanvas # pylint: disable=import-error
+
+task_bin_edges = [-1, 0, 1, 2, 4, 6, 8, 12, 24] # -1 is dummy to mark the underflow bin
+
+def save_canvas(canvas, title):
+    """
+    Save canvas in png, pdf, root.
+    """
+    format_list = [".png"]
+    for file_format in format_list:
+        canvas.SaveAs(title + file_format)
 
 def main():
     """
@@ -21,7 +36,7 @@ def main():
     parser.add_argument("outfile", type=str, help="Output file")
     args = parser.parse_args()
 
-    with open(args.fitter_config_file, "r") as fitter_config_f:
+    with open(args.fitter_config_file, "r", encoding="utf-8") as fitter_config_f:
         fitter_config_text = fitter_config_f.read()
     fitter_config = json.loads(fitter_config_text)
     pt_min = fitter_config["PtMin"]
@@ -33,14 +48,28 @@ def main():
 
     fout = TFile(args.outfile, "RECREATE")
 
-    for ind, (binmin, binmax) in enumerate(zip(pt_min, pt_max)):
+    ind = 0
+    nbins = len(task_bin_edges)
+    for binmin, binmax in zip(pt_min, pt_max):
         print(f"Processing pT bin: [{binmin}, {binmax})")
         hname = f"proj_{binmin}-{binmax}"
+        canv = TCanvas(f"c_{hname}", f"c_{hname}")
+        while ind < nbins and task_bin_edges[ind] < binmin + 0.001:
+            ind += 1
+        minind = ind - 1
+        while ind < nbins and task_bin_edges[ind] < binmax - 0.001:
+            ind += 1
+        maxind = ind - 1
+        if maxind > nbins - 2 or minind > nbins - 2:
+            raise ValueError(f"Requested range [{pt_min}, {pt_max}) outside task maximum {task_bin_edges[-1]}")
 
-        h_proj = hist.ProjectionX(hname, ind + 1, ind + 2)
+        h_proj = hist.ProjectionX(hname, minind, maxind)
+        h_proj = h_proj.Rebin(8)
+        h_proj.Draw()
         #hMassProj.GetYaxis().SetRangeUser(0, 30000)
 
         h_proj.Write()
+        save_canvas(canv, hname)
 
     fout.Close()
 
